@@ -17,7 +17,7 @@ public class DatabaseManager {
 		return this.connection;
 	}
 
-	public void shutdown() {
+	public void shutdown() throws SQLException {
 		this.connection.close();
 	}
 }
