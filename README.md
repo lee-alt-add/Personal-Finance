@@ -1,54 +1,51 @@
-Crystal clear ✅ — you want me to **write each iteration document as if I’m mentoring someone who is learning step by step while coding the project**. That means:
+Perfect 👍 If we swap **Spring Boot** for **Javalin**, the approach changes a bit:
 
-* Explaining concepts before tasks.
-* Using **MySQL** instead of PostgreSQL.
-* Keeping a **teaching tone** (why we’re doing something, not just what).
-* Every iteration builds on knowledge.
+* Javalin is a **lightweight web framework** (you’ll code more directly, less magic than Spring Boot).
+* You’ll still connect to **MySQL** (using JDBC or JPA/Hibernate — but for learning, I’ll suggest **JDBI** or plain JDBC\*\* so you see what’s happening).
+* This makes Iteration 1 a great learning experience because you’ll touch the **HTTP layer** and the **SQL layer** directly.
 
-Let’s redo **Iteration 1** in that style.
+Here’s the **Iteration 1 doc rewritten for Javalin** with the same teaching-first tone 👇
 
 ---
 
-# 📘 Iteration 1 – Java + MySQL Foundations
+# 📘 Iteration 1 – Java + MySQL Foundations with Javalin
 
 ## 🎯 Goal
 
-In this first iteration, we want to:
+In this first iteration, you will:
 
-1. Set up a **Java project** using Spring Boot.
+1. Set up a **Java project** with Javalin.
 2. Install and configure **MySQL locally**.
-3. Connect Java to MySQL using **Spring Data JPA**.
-4. Implement our first simple REST endpoints (`/health` and `/users`).
+3. Connect Java to MySQL using **JDBC** (direct SQL queries).
+4. Build your first REST endpoints (`/health`, `/users`).
 
-By the end of this sprint, you’ll have written your first **Java + SQL application**, tested it, and laid the foundation for all future iterations.
+By the end, you’ll have a running **Javalin + MySQL API**, with the ability to create and fetch users.
 
 ---
 
 ## 🧠 Concepts to Learn First
 
-Before coding, here are the key things you need to understand:
+1. **Javalin**: A lightweight Java web framework. Unlike Spring Boot, it doesn’t auto-generate much — you’ll define routes (`app.get`, `app.post`) yourself. Great for learning HTTP fundamentals.
 
-1. **Spring Boot**: A Java framework that makes it easier to build APIs without writing too much boilerplate code. It gives you a quick way to create REST endpoints.
+2. **MySQL Database**: A relational database for storing data. You’ll create a schema, connect from Java, and run SQL queries.
 
-2. **MySQL Database**: A relational database where we’ll store our data. Think of it like a set of connected Excel sheets where we can run queries.
+3. **JDBC (Java Database Connectivity)**: The standard way Java apps connect to SQL databases. You’ll write SQL queries directly in your code.
 
-3. **JPA (Java Persistence API)**: A way for Java to talk to the database using classes (`User`) instead of writing SQL manually every time. Under the hood, it still generates SQL for you.
-
-4. **CRUD**: Short for **Create, Read, Update, Delete** — the basic operations for working with data. We’ll start with Create (POST) and Read (GET).
+4. **CRUD**: Basic database operations: Create, Read, Update, Delete. We’ll start with Create (POST) and Read (GET).
 
 ---
 
 ## 📌 User Stories for Iteration 1
 
-1. **As a developer**, I want to run a Spring Boot app so that I can start building my finance tracker.
+1. **As a developer**, I want to run a Javalin app so that I can build my finance tracker.
 
-   * Acceptance: `mvn spring-boot:run` starts the app.
+   * Acceptance: Running `mvn exec:java` starts the app.
 
-2. **As a developer**, I want a health check endpoint so that I can confirm my app is running.
+2. **As a developer**, I want a health check endpoint so that I can confirm my app is alive.
 
    * Acceptance: `GET /health` returns `{ "status": "UP" }`.
 
-3. **As a developer**, I want to store and retrieve users from a MySQL database so that I know Java ↔ MySQL works.
+3. **As a developer**, I want to store and retrieve users from MySQL so that I know Java ↔ MySQL works.
 
    * Acceptance: I can `POST` a user (`name`, `email`) and `GET` it back.
 
@@ -64,7 +61,7 @@ Before coding, here are the key things you need to understand:
   java -version
   ```
 
-* **Maven**: This is our build tool. Verify with:
+* **Maven**: Verify with:
 
   ```bash
   mvn -v
@@ -81,137 +78,180 @@ Before coding, here are the key things you need to understand:
 
 ---
 
-### 2. Create Spring Boot Project
+### 2. Create Javalin Project
 
-Go to [Spring Initializr](https://start.spring.io/). Choose:
+Create a Maven project with this `pom.xml` (minimal):
 
-* **Project**: Maven
-* **Language**: Java
-* **Spring Boot**: Latest stable
-* **Dependencies**:
+```xml
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                             http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>com.fintrack</groupId>
+    <artifactId>fintrack</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
 
-  * Spring Web
-  * Spring Data JPA
-  * MySQL Driver
+    <dependencies>
+        <!-- Javalin -->
+        <dependency>
+            <groupId>io.javalin</groupId>
+            <artifactId>javalin</artifactId>
+            <version>6.1.3</version>
+        </dependency>
 
-Download, unzip, and open in your IDE (IntelliJ or Eclipse).
-
----
-
-### 3. Configure Database Connection
-
-Open `src/main/resources/application.yml` (create it if it doesn’t exist):
-
-```yaml
-spring:
-  datasource:
-    url: jdbc:mysql://localhost:3306/fintrack
-    username: finuser
-    password: finpass
-  jpa:
-    hibernate:
-      ddl-auto: update
-    show-sql: true
+        <!-- MySQL Driver -->
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>8.0.33</version>
+        </dependency>
+    </dependencies>
+</project>
 ```
 
-* `ddl-auto: update` means Hibernate will create/update tables automatically.
-* `show-sql: true` lets you see generated SQL in the console (great for learning).
-
 ---
 
-### 4. Implement Health Check
-
-Create a simple controller:
+### 3. Create the App Skeleton
 
 ```java
-@RestController
-public class HealthController {
+import io.javalin.Javalin;
+import java.util.*;
 
-    @GetMapping("/health")
-    public Map<String, String> health() {
-        return Map.of("status", "UP");
+public class App {
+    public static void main(String[] args) {
+        Javalin app = Javalin.create().start(8080);
+
+        app.get("/health", ctx -> {
+            ctx.json(Map.of("status", "UP"));
+        });
     }
 }
 ```
 
-Try running the app:
+Run:
 
 ```bash
-mvn spring-boot:run
+mvn compile exec:java -Dexec.mainClass="com.fintrack.App"
 ```
 
 Visit [http://localhost:8080/health](http://localhost:8080/health).
 
 ---
 
-### 5. Create `User` Entity + Repository
+### 4. Connect to MySQL with JDBC
 
-**Entity (table mapping):**
-
-```java
-import jakarta.persistence.*;
-
-@Entity
-public class User {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    private String name;
-    private String email;
-
-    // Getters and setters
-}
-```
-
-**Repository (auto CRUD):**
+Create a helper class for DB connection:
 
 ```java
-import org.springframework.data.jpa.repository.JpaRepository;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 
-public interface UserRepository extends JpaRepository<User, Long> {
-}
-```
+public class Database {
+    private static final String URL = "jdbc:mysql://localhost:3306/fintrack";
+    private static final String USER = "finuser";
+    private static final String PASSWORD = "finpass";
 
-**Controller:**
-
-```java
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-
-@RestController
-@RequestMapping("/users")
-public class UserController {
-    private final UserRepository repo;
-
-    public UserController(UserRepository repo) {
-        this.repo = repo;
-    }
-
-    @PostMapping
-    public User create(@RequestBody User user) {
-        return repo.save(user);
-    }
-
-    @GetMapping
-    public List<User> list() {
-        return repo.findAll();
+    public static Connection getConnection() throws SQLException {
+        return DriverManager.getConnection(URL, USER, PASSWORD);
     }
 }
 ```
 
 ---
 
-### 6. Test Your Work
+### 5. Create User Model and Repository
 
-Run the app again:
+**Model:**
 
-```bash
-mvn spring-boot:run
+```java
+public class User {
+    private int id;
+    private String name;
+    private String email;
+
+    // constructor, getters, setters
+}
 ```
 
-Test with curl:
+**Repository (direct SQL):**
+
+```java
+import java.sql.*;
+import java.util.*;
+
+public class UserRepository {
+    public void save(User user) throws SQLException {
+        try (Connection conn = Database.getConnection()) {
+            String sql = "INSERT INTO users (name, email) VALUES (?, ?)";
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setString(1, user.getName());
+            stmt.setString(2, user.getEmail());
+            stmt.executeUpdate();
+        }
+    }
+
+    public List<User> findAll() throws SQLException {
+        List<User> users = new ArrayList<>();
+        try (Connection conn = Database.getConnection()) {
+            String sql = "SELECT id, name, email FROM users";
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                users.add(new User(
+                    rs.getInt("id"),
+                    rs.getString("name"),
+                    rs.getString("email")
+                ));
+            }
+        }
+        return users;
+    }
+}
+```
+
+Make sure you create the table in MySQL:
+
+```sql
+CREATE TABLE users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100),
+    email VARCHAR(100)
+);
+```
+
+---
+
+### 6. Add Endpoints
+
+In `App.java`:
+
+```java
+UserRepository repo = new UserRepository();
+
+app.post("/users", ctx -> {
+    User user = ctx.bodyAsClass(User.class);
+    repo.save(user);
+    ctx.status(201).json(user);
+});
+
+app.get("/users", ctx -> {
+    ctx.json(repo.findAll());
+});
+```
+
+---
+
+### 7. Test It
+
+Run:
+
+```bash
+mvn compile exec:java -Dexec.mainClass="com.fintrack.App"
+```
+
+Test:
 
 ```bash
 curl -X POST http://localhost:8080/users \
@@ -221,31 +261,32 @@ curl -X POST http://localhost:8080/users \
 curl http://localhost:8080/users
 ```
 
-You should see the user stored and retrieved from MySQL! 🎉
+You should see Alice appear from MySQL! 🎉
 
 ---
 
 ## 📅 Iteration 1 Suggested Timeline (1 Week)
 
-* **Day 1–2**: Install tools (Java, Maven, MySQL). Create DB and user.
-* **Day 3**: Scaffold Spring Boot project. Verify `/health`.
-* **Day 4–5**: Configure MySQL connection. Implement `User` entity.
-* **Day 6**: Test endpoints. Debug SQL errors if any.
-* **Day 7**: Demo to yourself: show `/health`, create/list users. Write learnings in README.
+* **Day 1–2**: Install tools (Java, Maven, MySQL). Create DB and `users` table.
+* **Day 3**: Create Javalin skeleton with `/health`.
+* **Day 4–5**: Implement JDBC connection + repository.
+* **Day 6**: Build `/users` POST + GET.
+* **Day 7**: Demo to yourself: show `/health`, add/list users. Write learnings.
 
 ---
 
 ## ✅ Definition of Done (Iteration 1)
 
-* App runs locally with `mvn spring-boot:run`.
-* `/health` works.
-* Can `POST` and `GET` users with MySQL persistence.
-* Repo has README with **setup instructions for a beginner**.
+* App runs with `mvn exec:java`.
+* `/health` returns `{ "status": "UP" }`.
+* MySQL database exists with `users` table.
+* I can `POST` and `GET` users.
+* Repo has a README with **step-by-step setup instructions for a beginner**.
 
 ---
 
-👉 In **Iteration 2**, we’ll add **expenses & incomes**, plus write **SQL queries for reporting** (like “top spending categories”).
+👉 In **Iteration 2**, we’ll extend this by adding **expenses & incomes** (new tables, new endpoints, simple reports with SQL queries).
 
 ---
 
-Do you want me to go ahead and **write Iteration 2 in the same beginner-teaching style**, or do you want to digest Iteration 1 first before moving on?
+Would you like me to go ahead and **draft Iteration 2 in the same teaching style with Javalin + MySQL**?
