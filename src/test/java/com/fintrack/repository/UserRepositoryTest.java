@@ -59,4 +59,16 @@ public class UserRepositoryTest {
         assertTrue(users.getFirst().getName().equals("John"));
         assertTrue(users.getLast().getName().equals("Jane"));
     }
+
+    @Test
+    public void removeUserTest() throws SQLException {
+        Tables tables = new Tables(manager.getConnection());
+        UserRepository userRepo = new UserRepository(manager.getConnection());
+        User user = new User(1,"John", "john@doe.com");
+
+        assertTrue(tables.createUsers());
+        assertTrue(userRepo.save(user));
+        assertTrue(userRepo.removeUser(1));
+        assertEquals(0,userRepo.findAll().size());
+    }
 }

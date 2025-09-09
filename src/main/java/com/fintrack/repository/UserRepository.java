@@ -49,4 +49,17 @@ public class UserRepository {
 		}
 		
 	}
+
+	public boolean removeUserById(int id) {
+		String sql = "DELETE FROM users WHERE users.id = ?";
+
+		try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+			stmt.setInt(1, id);
+			stmt.executeUpdate();
+			return true;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
 }
