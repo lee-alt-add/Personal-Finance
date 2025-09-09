@@ -15,6 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class WebServerTests {
 	private static WebServer server;
+    private String userInfo = "{\"name\":\"John\", \"email\":\"john@doe.com\"}";
 
 	/**
      * Start the app server before all tests run
@@ -39,5 +40,41 @@ public class WebServerTests {
     	assertEquals(HttpStatus.OK, response.getStatus());
         JSONObject jsonObject = response.getBody().getObject();
         assertEquals("UP", jsonObject.get("status"));
+    }
+
+    @Test
+    public void userTest() {
+        HttpResponse<JsonNode> response = addUser(userInfo);
+
+        assertEquals(201, response.getStatus());
+        JSONObject jsonObject = response.getBody().getObject();
+        assertEquals("John", jsonObject.get("name"));
+        assertEquals("john@doe.com", jsonObject.get("email"));
+    }
+
+    @Test
+    public void findAllUsersEmptyTest() {
+        HttpResponse<JsonNode> response = Unirest.get("http://localhost:8080/all").asJson();
+        assertEquals(201, response.getStatus());
+        JSONArray jsonArray = response.getBody().getArray();
+        assertEquals(0, jsonArray.length());
+    }
+
+    @Test
+    public void findAllUsersTest() {
+        // Adding user
+        addUser(userInfo);
+
+        // Requesting all user added
+        HttpResponse<JsonNode> response = Unirest.get("http://localhost:8080/all").asJson();
+        assertEquals(201, response.getStatus());
+        JSONArray jsonArray = response.getBody().getArray();
+        assertEquals(1, jsonArray.length());
+        assertTrue(jsonArray.get(0).toString().contains("John"));
+    }
+
+    private HttpResponse<JsonNode> addUser(String userInfo) {
+        String url = "http://localhost:8080/user";
+        return Unirest.post(url).body(userInfo).asJson();
     }
 }
