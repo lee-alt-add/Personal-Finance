@@ -5,16 +5,20 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class DatabaseManager {
-	private static final String URL = "jdbc:sqlite::memory:";
-    private final Connection connection;
+	private final String URL = "jdbc:sqlite::memory:";
+    private Connection connection;
 
 	/**
      * Connect to an in-memory SQLite database
      *
      * @throws SQLException if the connection failed
      */
-    public DatabaseManager() throws SQLException {
-        this.connection = DriverManager.getConnection(URL);
+    public DatabaseManager() {
+        try {
+            this.connection = DriverManager.getConnection(URL);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
