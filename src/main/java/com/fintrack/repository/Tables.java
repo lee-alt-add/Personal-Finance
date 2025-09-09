@@ -10,7 +10,7 @@ public class Tables {
 		this.connection = connection;
 	}
 
-	public boolean createTable(String sql) throws SQLException {
+	public boolean createTable(String sql) {
 		if (sql.toLowerCase().trim().contains("create table")) {
             try (final PreparedStatement s = connection.prepareStatement(sql)) {
                 int result = s.executeUpdate();
@@ -23,7 +23,7 @@ public class Tables {
         return false;
 	}
 
-	public boolean createUsers() throws SQLException {
+	public boolean createUsers() {
 		String sql = """
 			CREATE TABLE users (
 				id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
