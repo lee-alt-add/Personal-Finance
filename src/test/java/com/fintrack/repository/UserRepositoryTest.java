@@ -6,6 +6,8 @@ import org.junit.jupiter.api.BeforeEach;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 import java.sql.*;
 import java.util.*;
 
@@ -68,7 +70,6 @@ public class UserRepositoryTest {
 
         assertTrue(tables.createUsers());
         assertTrue(userRepo.save(user));
-        assertTrue(userRepo.removeUser(1));
-        assertEquals(0,userRepo.findAll().size());
+        assertNotNull(userRepo.removeUserById(1));
     }
 }

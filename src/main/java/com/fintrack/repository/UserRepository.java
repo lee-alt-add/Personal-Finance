@@ -50,16 +50,17 @@ public class UserRepository {
 		
 	}
 
-	public boolean removeUserById(int id) {
+	public User removeUserById(int id) {
 		String sql = "DELETE FROM users WHERE users.id = ?";
 
 		try (PreparedStatement stmt = connection.prepareStatement(sql)) {
 			stmt.setInt(1, id);
+			User user = findAll().stream().filter(e -> e.getId() == id).toList().getFirst();
 			stmt.executeUpdate();
-			return true;
+			return user;
 		} catch (SQLException e) {
 			e.printStackTrace();
-			return false;
+			return null;
 		}
 	}
 }
