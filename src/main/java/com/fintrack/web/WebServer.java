@@ -13,9 +13,13 @@ public class WebServer {
 			config.defaultContentType = "application/json";
 		});
 
-		this.javalin.get("/health", ctx -> {
-            ctx.json(Map.of("status", "UP"));
-        });
+		APIHandler.initializeDB();
+
+		this.javalin.get("/health", ctx -> APIHandler.getHealth(ctx));
+
+        this.javalin.post("/user", ctx -> APIHandler.saveUser(ctx));
+
+        this.javalin.get("/all", ctx -> APIHandler.findAllUsers(ctx));
 	}
 
 	public void start(int port) {
