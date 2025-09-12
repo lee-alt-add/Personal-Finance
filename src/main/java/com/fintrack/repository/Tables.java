@@ -34,4 +34,35 @@ public class Tables {
 
 		return createTable(sql);
 	}
+
+	public boolean createExpenses() {
+		String sql = """
+			CREATE TABLE expenses (
+		    id INT AUTO_INCREMENT PRIMARY KEY,
+		    user_id INT,
+		    amount DECIMAL(10,2),
+		    category VARCHAR(50),
+		    description VARCHAR(255),
+		    date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+		    FOREIGN KEY (user_id) REFERENCES users(id)
+		);
+		""";
+
+		return createTable(sql);
+	}
+
+	public boolean createIncome() {
+		String sql = """
+			CREATE TABLE income (
+		    id INT AUTO_INCREMENT PRIMARY KEY,
+		    user_id INT,
+		    amount DECIMAL(10,2),
+		    source VARCHAR(100),
+		    date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+		    FOREIGN KEY (user_id) REFERENCES users(id)
+		);
+		""";
+
+		return createTable(sql);
+	}
 }
