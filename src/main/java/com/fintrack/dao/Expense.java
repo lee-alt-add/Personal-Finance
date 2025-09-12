@@ -9,6 +9,17 @@ public class Expense {
     private String category;
     private String description;
     private LocalDateTime date;
+
+    public Expense(int id, int userId, double amount, String category, String description, LocalDateTime date) {
+        this.id = id;
+        this.userId = userId;
+        this.amount = amount;
+        this.category = category;
+        this.description = description;
+        this.date = date;
+    }
+
+    public Expense() {}
     
     public void setId(int id) {
         this.id = id;
