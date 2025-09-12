@@ -42,7 +42,8 @@ public class UserRepositoryTest {
         User user = new User(1,"John", "john@doe.com");
 
         assertTrue(tables.createUsers());
-        assertTrue(userRepo.save(user));
+        assertNotNull(userRepo.save(user));
+        assertNotNull(userRepo.removeUserById(1));
     }
 
     @Test
@@ -53,13 +54,16 @@ public class UserRepositoryTest {
         User userTwo = new User(2,"Jane", "jane@doe.com");
 
         assertTrue(tables.createUsers());
-        assertTrue(userRepo.save(user));
-        assertTrue(userRepo.save(userTwo));
+        assertNotNull(userRepo.save(user));
+        assertNotNull(userRepo.save(userTwo));
 
         List<User> users = userRepo.findAll();
         assertEquals(2, users.size());
         assertTrue(users.getFirst().getName().equals("John"));
         assertTrue(users.getLast().getName().equals("Jane"));
+        assertNotNull(userRepo.removeUserById(1));
+        assertNotNull(userRepo.removeUserById(2));
+        assertTrue(userRepo.findAll().isEmpty());
     }
 
     @Test
@@ -69,7 +73,7 @@ public class UserRepositoryTest {
         User user = new User(1,"John", "john@doe.com");
 
         assertTrue(tables.createUsers());
-        assertTrue(userRepo.save(user));
+        assertNotNull(userRepo.save(user));
         assertNotNull(userRepo.removeUserById(1));
     }
 }

@@ -14,16 +14,17 @@ public class UserRepository {
 		this.connection = connection;
 	}
 
-	public boolean save(User user) {
+	public User save(User user) {
 		String sql = "INSERT INTO users (name, email) VALUES (?, ?);";
 		try (PreparedStatement stmt = connection.prepareStatement(sql)) {
 			stmt.setString(1, user.getName());
 			stmt.setString(2, user.getEmail());
 			stmt.executeUpdate();
-			return true;
+			User userInDb = findAll().getLast();
+			return userInDb;
 		} catch (SQLException e) {
 			e.printStackTrace();
-			return false;
+			return null;
 		}
 	}
 
