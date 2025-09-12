@@ -25,8 +25,8 @@ public class APIHandler {
 	public static void saveUser(Context context) {
 		try {
 			User user = context.bodyAsClass(User.class);
-			repo.save(user);
-			context.status(201).json(user);
+			User userInDb = repo.save(user);
+			context.status(201).json(userInDb);
 		} catch (Exception e) {
 			context.status(404);
 		}
