@@ -38,7 +38,7 @@ public class Tables {
 	public boolean createExpenses() {
 		String sql = """
 			CREATE TABLE expenses (
-		    id INT AUTO_INCREMENT PRIMARY KEY,
+		    id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
 		    user_id INT,
 		    amount DECIMAL(10,2),
 		    category VARCHAR(50),
@@ -54,8 +54,8 @@ public class Tables {
 	public boolean createIncome() {
 		String sql = """
 			CREATE TABLE income (
-		    id INT AUTO_INCREMENT PRIMARY KEY,
-		    user_id INT,
+		    id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+		    user_id INTEGER,
 		    amount DECIMAL(10,2),
 		    source VARCHAR(100),
 		    date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
