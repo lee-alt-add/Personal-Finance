@@ -35,4 +35,14 @@ public class APIHandler {
 	public static void findAllUsers(Context context) {
 		context.status(201).json(repo.findAll());
 	}
+
+	public static void removeUser(Context context) {
+		try {
+			int id = Integer.parseInt(context.pathParam("id"));
+			User user = repo.removeUserById(id);
+			context.status(200).json(user);
+		} catch (Exception e) {
+			context.status(404);
+		}
+	}
 }

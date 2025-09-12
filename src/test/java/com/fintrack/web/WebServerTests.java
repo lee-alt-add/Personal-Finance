@@ -50,6 +50,19 @@ public class WebServerTests {
         JSONObject jsonObject = response.getBody().getObject();
         assertEquals("John", jsonObject.get("name"));
         assertEquals("john@doe.com", jsonObject.get("email"));
+        removeUser(0);
+    }
+
+    @Test
+    public void removeUserTest() {
+        HttpResponse<JsonNode> response = addUser(userInfo);
+        assertEquals(201, response.getStatus());
+
+        HttpResponse<JsonNode> removalResponse = removeUser(1);
+        assertEquals(200, removalResponse.getStatus());
+        JSONObject jsonObject = removalResponse.getBody().getObject();
+        assertEquals("John", jsonObject.get("name"));
+        assertEquals("john@doe.com", jsonObject.get("email"));
     }
 
     @Test
@@ -76,5 +89,10 @@ public class WebServerTests {
     private HttpResponse<JsonNode> addUser(String userInfo) {
         String url = "http://localhost:8080/user";
         return Unirest.post(url).body(userInfo).asJson();
+    }
+
+    private HttpResponse<JsonNode> removeUser(int id) {
+        String url = "http://localhost:8080/user/" + id;
+        return Unirest.delete(url).asJson();
     }
 }

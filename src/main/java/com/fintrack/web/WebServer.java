@@ -19,6 +19,8 @@ public class WebServer {
 
         this.javalin.post("/user", ctx -> APIHandler.saveUser(ctx));
 
+        this.javalin.delete("/user/{id}", ctx -> APIHandler.removeUser(ctx));
+
         this.javalin.get("/all", ctx -> APIHandler.findAllUsers(ctx));
 	}
 
