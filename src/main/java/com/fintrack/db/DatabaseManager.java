@@ -21,6 +21,14 @@ public class DatabaseManager {
         }
     }
 
+    public DatabaseManager(String url) {
+        try {
+            this.connection = DriverManager.getConnection(url);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
     /**
      * Get the database connection
      * @return the database connection
