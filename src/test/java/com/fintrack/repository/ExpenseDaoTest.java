@@ -62,7 +62,6 @@ public class ExpenseDaoTest {
 
         List<Expense> expensesFound = expenseDao.findAllExpenses();
         assertEquals(2, expensesFound.size());
-        System.out.println(expensesFound.getFirst().getId() + " : " + expensesFound.getLast().getId());
         assertEquals("food", expensesFound.getFirst().getCategory());
         assertEquals("gym", expensesFound.getLast().getCategory());
         assertNotNull(expenseDao.removeExpenseById(1));

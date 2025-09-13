@@ -15,7 +15,7 @@ public class ExpenseDao {
 	}
 
 	public Expense addExpense(Expense expense) throws SQLException {
-	    String sql = "INSERT INTO expenses (user_id, amount, category, description) VALUES (?, ?, ?, ?)";
+	    String sql = "INSERT INTO expenses (user_id, amount, category, description) VALUES (?, ?, ?, ?);";
 	    try (PreparedStatement stmt = connection.prepareStatement(sql)) {
 	        stmt.setInt(1, expense.getUserId());
 	        stmt.setDouble(2, expense.getAmount());
@@ -57,7 +57,7 @@ public class ExpenseDao {
 	}
 
 	public Expense removeExpenseById(int id) {
-		String sql = "DELETE FROM expenses WHERE expenses.id = ?";
+		String sql = "DELETE FROM expenses WHERE expenses.id = ?;";
 
 		try (PreparedStatement stmt = connection.prepareStatement(sql)) {
 			stmt.setInt(1, id);

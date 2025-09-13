@@ -52,7 +52,7 @@ public class UserRepository {
 	}
 
 	public User removeUserById(int id) {
-		String sql = "DELETE FROM users WHERE users.id = ?";
+		String sql = "DELETE FROM users WHERE users.id = ?;";
 
 		try (PreparedStatement stmt = connection.prepareStatement(sql)) {
 			stmt.setInt(1, id);

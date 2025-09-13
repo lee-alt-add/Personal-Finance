@@ -56,7 +56,7 @@ public class IncomeDao {
 	}
 
 	public Income removeIncomeById(int id) {
-		String sql = "DELETE FROM income WHERE income.id = ?";
+		String sql = "DELETE FROM income WHERE income.id = ?;";
 
 		try (PreparedStatement stmt = connection.prepareStatement(sql)) {
 			stmt.setInt(1, id);
