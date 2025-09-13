@@ -114,6 +114,6 @@ public class WebServerTests {
             jsonObject =  response.getBody().getArray().getJSONObject(0);
         }
         
-        return jsonObject.getInt("id");;
+        return jsonObject.getInt("id");
     }
 }
