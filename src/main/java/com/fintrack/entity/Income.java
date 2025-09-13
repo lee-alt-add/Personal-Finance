@@ -1,26 +1,24 @@
-package com.fintrack.dao;
+package com.fintrack.entity;
 
 import java.time.LocalDateTime;
 
-public class Expense {
+public class Income {
     private int id;
     private int userId;
     private double amount;
-    private String category;
-    private String description;
+    private String source;
     private LocalDateTime date;
 
-    public Expense(int id, int userId, double amount, String category, String description, LocalDateTime date) {
+    public Income(int id, int userId, double amount, String source, LocalDateTime date) {
         this.id = id;
         this.userId = userId;
         this.amount = amount;
-        this.category = category;
-        this.description = description;
+        this.source = source;
         this.date = date;
     }
 
-    public Expense() {}
-    
+    public Income() {}
+
     public void setId(int id) {
         this.id = id;
     }
@@ -33,12 +31,8 @@ public class Expense {
         this.amount = amount;
     }
 
-    public void setCategory(String category) {
-        this.category = category;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
+    public void setSource(String source) {
+        this.source = source;
     }
 
     public void setDate(LocalDateTime date) {
@@ -51,9 +45,7 @@ public class Expense {
 
     public double getAmount() { return amount; }
 
-    public String getCategory() { return category; }
-
-    public String getDescription() { return description; }
+    public String getSource() { return source; }
 
     public LocalDateTime getDate() { return date; }
 }

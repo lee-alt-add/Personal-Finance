@@ -5,7 +5,7 @@ import java.sql.*;
 import java.util.*;
 import java.time.LocalDateTime;
 
-import com.fintrack.dao.Income;
+import com.fintrack.entity.Income;
 
 public class IncomeDao {
 	private Connection connection;

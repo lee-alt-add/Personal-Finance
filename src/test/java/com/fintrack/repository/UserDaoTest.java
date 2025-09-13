@@ -12,7 +12,7 @@ import java.sql.*;
 import java.util.*;
 
 import com.fintrack.db.DatabaseManager;
-import com.fintrack.dao.User;
+import com.fintrack.entity.User;
 
 public class UserDaoTest {
 	private static DatabaseManager manager;

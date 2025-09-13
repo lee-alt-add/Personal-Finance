@@ -6,13 +6,16 @@ import java.sql.Connection;
 
 import com.fintrack.repository.*;
 import com.fintrack.db.DatabaseManager;
+import com.fintrack.web.service.*;
 
 public class WebServer {
 	private Javalin javalin;
-	private DatabaseManager manager;
+	private DatabaseManager manager = new DatabaseManager();
 
 
 	public WebServer() {
+
+		this.setServiceConnections();
 
 		this.javalin = Javalin.create(config -> {
 			config.defaultContentType = "application/json";
@@ -21,16 +24,18 @@ public class WebServer {
 
 		this.javalin.get("/health", ctx -> APIHandler.getHealth(ctx));
 
-        this.javalin.post("/user", ctx -> APIHandler.saveUser(ctx));
+        this.javalin.post("/users", ctx -> UserService.saveUser(ctx));
 
-        this.javalin.delete("/user/{id}", ctx -> APIHandler.removeUser(ctx));
+        this.javalin.delete("/users/{id}", ctx -> UserService.removeUser(ctx));
 
-        this.javalin.get("/all", ctx -> APIHandler.findAllUsers(ctx));
+        this.javalin.get("/all", ctx -> UserService.findAllUsers(ctx));
+
+        this.javalin.post("/users/{id}/expenses", ctx -> ExpenseService.addUserExpense(ctx));
 	}
 
 	public void setDatabaseManager(String databaseUrl) {
 		manager = new DatabaseManager(databaseUrl);
-		APIHandler.initializeDB(manager.getConnection());
+		this.setServiceConnections();
 	}
 
 	public Connection getDBConnection() {
@@ -46,8 +51,14 @@ public class WebServer {
 		this.javalin.stop();
 	}
 
+	private void setServiceConnections() {
+		UserService.setDatabaseConnection(manager.getConnection());
+		ExpenseService.setDatabaseConnection(manager.getConnection());
+	}
+
 	public static void main(String[] args) {
 		WebServer server = new WebServer();
+		server.setDatabaseManager("jdbc:sqlite:Database.db");
 		server.start(8080);
 	}
 }

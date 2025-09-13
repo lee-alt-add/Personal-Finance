@@ -3,7 +3,7 @@ package com.fintrack.repository;
 
 import java.sql.*;
 import java.util.*;
-import com.fintrack.dao.User;
+import com.fintrack.entity.User;
 
 
 public class UserDao {

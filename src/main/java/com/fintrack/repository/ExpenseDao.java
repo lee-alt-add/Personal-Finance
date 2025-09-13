@@ -4,7 +4,7 @@ package com.fintrack.repository;
 import java.sql.*;
 import java.util.*;
 import java.time.LocalDateTime;
-import com.fintrack.dao.Expense;
+import com.fintrack.entity.Expense;
 
 
 public class ExpenseDao {
@@ -45,7 +45,7 @@ public class ExpenseDao {
 					results.getDouble("amount"),
 					results.getString("category"),
 					results.getString("description"),
-					results.getTimestamp("date").toLocalDateTime()
+					results.getTimestamp("date")
 				));
 			}
 			return allExpenses;
@@ -54,6 +54,10 @@ public class ExpenseDao {
 			e.printStackTrace();
 			return allExpenses;
 		}
+	}
+
+	public List<Expense> findAllExpensesById(int id) {
+		return findAllExpenses().stream().filter(e -> e.getId() == id).toList();
 	}
 
 	public Expense removeExpenseById(int id) {
@@ -69,4 +73,26 @@ public class ExpenseDao {
 			return null;
 		}
 	}
+
+	public Expense findExpenseById(int id) {
+	    String sql = "SELECT * FROM expenses WHERE id = ?";
+	    try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+	        stmt.setInt(1, id);
+	        ResultSet rs = stmt.executeQuery();
+	        if (rs.next()) {
+	            return new Expense(
+	                rs.getInt("id"),
+	                rs.getInt("user_id"),
+	                rs.getDouble("amount"),
+	                rs.getString("category"),
+	                rs.getString("description"),
+	                rs.getTimestamp("date")
+	            );
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	    return null;
+	}
+
 }

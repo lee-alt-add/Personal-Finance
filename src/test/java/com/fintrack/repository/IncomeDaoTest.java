@@ -13,7 +13,7 @@ import java.util.*;
 import java.time.LocalDateTime;
 
 import com.fintrack.db.DatabaseManager;
-import com.fintrack.dao.Income;
+import com.fintrack.entity.Income;
 
 public class IncomeDaoTest {
 	private static DatabaseManager manager;

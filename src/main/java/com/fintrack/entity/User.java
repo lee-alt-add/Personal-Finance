@@ -1,4 +1,4 @@
-package com.fintrack.dao;
+package com.fintrack.entity;
 
 public class User {
 	private int id;

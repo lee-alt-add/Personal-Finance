@@ -13,7 +13,7 @@ import java.util.*;
 import java.time.LocalDateTime;
 
 import com.fintrack.db.DatabaseManager;
-import com.fintrack.dao.Expense;
+import com.fintrack.entity.Expense;
 
 public class ExpenseDaoTest {
 	private static DatabaseManager manager;
@@ -40,7 +40,7 @@ public class ExpenseDaoTest {
     public void saveExpenseTest() throws SQLException {
         Tables tables = new Tables(manager.getConnection());
         ExpenseDao expenseDao = new ExpenseDao(manager.getConnection());
-        Expense expense = new Expense(1,1, 200.00, "food", "none", LocalDateTime.now());
+        Expense expense = new Expense(1,1, 200.00, "food", "none", Timestamp.valueOf(LocalDateTime.now()));
 
         assertTrue(tables.createExpenses());
         Expense expenseAdded = expenseDao.addExpense(expense);
@@ -53,8 +53,8 @@ public class ExpenseDaoTest {
     public void findAllExpensesTest() throws SQLException {
         Tables tables = new Tables(manager.getConnection());
         ExpenseDao expenseDao = new ExpenseDao(manager.getConnection());
-        Expense expense = new Expense(1,1, 200.00, "food", "none", LocalDateTime.now());
-        Expense expensetwo = new Expense(2,1, 350.00, "gym", "none", LocalDateTime.now());
+        Expense expense = new Expense(1,1, 200.00, "food", "none", Timestamp.valueOf(LocalDateTime.now()));
+        Expense expensetwo = new Expense(2,1, 350.00, "gym", "none", Timestamp.valueOf(LocalDateTime.now()));
 
         assertTrue(tables.createExpenses());
         assertNotNull(expenseDao.addExpense(expense));

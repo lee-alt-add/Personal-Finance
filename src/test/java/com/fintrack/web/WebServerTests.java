@@ -26,7 +26,6 @@ public class WebServerTests {
     @BeforeAll
     public static void startServer() {
         server = new WebServer();
-        server.setDatabaseManager("jdbc:sqlite::memory:");
         server.start(8080);
         tables = new Tables(server.getDBConnection());
         tables.createUsers();
@@ -51,7 +50,7 @@ public class WebServerTests {
     @Test
     public void userTest() {
         HttpResponse<JsonNode> response = addUser(userInfo);
-        assertEquals(201, response.getStatus());
+        assertEquals(200, response.getStatus());
 
         // Get id (as per the database) of user that was saved
         int id = getDatabaseId(response);
@@ -66,7 +65,7 @@ public class WebServerTests {
     @Test
     public void removeUserTest() {
         HttpResponse<JsonNode> response = addUser(userInfo);
-        assertEquals(201, response.getStatus());
+        assertEquals(200, response.getStatus());
 
         int id = getDatabaseId(response);
         HttpResponse<JsonNode> removalResponse = removeUser(id);
@@ -80,7 +79,7 @@ public class WebServerTests {
     @Test
     public void findAllUsersEmptyTest() {
         HttpResponse<JsonNode> response = Unirest.get("http://localhost:8080/all").asJson();
-        assertEquals(201, response.getStatus());
+        assertEquals(200, response.getStatus());
         JSONArray jsonArray = response.getBody().getArray();
         assertEquals(0, jsonArray.length());
     }
@@ -92,7 +91,7 @@ public class WebServerTests {
 
         // Requesting all users added
         HttpResponse<JsonNode> response = Unirest.get("http://localhost:8080/all").asJson();
-        assertEquals(201, response.getStatus());
+        assertEquals(200, response.getStatus());
         JSONArray jsonArray = response.getBody().getArray();
         assertEquals(1, jsonArray.length());
         assertTrue(jsonArray.get(0).toString().contains("John"));
@@ -104,12 +103,12 @@ public class WebServerTests {
     }
 
     private HttpResponse<JsonNode> addUser(String userInfo) {
-        String url = "http://localhost:8080/user";
+        String url = "http://localhost:8080/users";
         return Unirest.post(url).body(userInfo).asJson();
     }
 
     private HttpResponse<JsonNode> removeUser(int id) {
-        String url = "http://localhost:8080/user/" + id;
+        String url = "http://localhost:8080/users/" + id;
         return Unirest.delete(url).asJson();
     }
 
