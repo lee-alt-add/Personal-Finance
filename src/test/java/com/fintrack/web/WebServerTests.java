@@ -13,8 +13,11 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import com.fintrack.repository.Tables;
+
 public class WebServerTests {
 	private static WebServer server;
+    private static Tables tables;
     private String userInfo = "{\"name\":\"John\", \"email\":\"john@doe.com\"}";
 
 	/**
@@ -23,7 +26,10 @@ public class WebServerTests {
     @BeforeAll
     public static void startServer() {
         server = new WebServer();
+        server.setDatabaseManager("jdbc:sqlite::memory:");
         server.start(8080);
+        tables = new Tables(server.getDBConnection());
+        tables.createUsers();
     }
 
     /**

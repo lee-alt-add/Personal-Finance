@@ -2,20 +2,18 @@ package com.fintrack.web;
 
 import io.javalin.http.Context;
 import java.util.Map;
+import java.sql.Connection;
 
 import com.fintrack.dao.User;
 import com.fintrack.db.DatabaseManager;
 import com.fintrack.repository.*;
-import java.sql.SQLException;
 
 public class APIHandler {
 
-	static DatabaseManager manager = new DatabaseManager();
-	static MainDao repo = new MainDao(manager.getConnection());
-	static Tables userTable = new Tables(manager.getConnection());
+	static MainDao mainRepo = null;
 	
-	public static void initializeDB() {
-		userTable.createUsers();
+	public static void initializeDB(Connection connection) {
+		mainRepo = new MainDao(connection);
 	}
 
 	public static void getHealth(Context context) {
@@ -25,7 +23,7 @@ public class APIHandler {
 	public static void saveUser(Context context) {
 		try {
 			User user = context.bodyAsClass(User.class);
-			User userInDb = repo.userDao.save(user);
+			User userInDb = mainRepo.userDao.save(user);
 			context.status(201).json(userInDb);
 		} catch (Exception e) {
 			context.status(404);
@@ -33,13 +31,13 @@ public class APIHandler {
 	}
 
 	public static void findAllUsers(Context context) {
-		context.status(201).json(repo.userDao.findAll());
+		context.status(201).json(mainRepo.userDao.findAll());
 	}
 
 	public static void removeUser(Context context) {
 		try {
 			int id = Integer.parseInt(context.pathParam("id"));
-			User user = repo.userDao.removeUserById(id);
+			User user = mainRepo.userDao.removeUserById(id);
 			context.status(200).json(user);
 		} catch (Exception e) {
 			context.status(404);
