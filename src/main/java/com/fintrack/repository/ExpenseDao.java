@@ -22,8 +22,9 @@ public class ExpenseDao {
 	        stmt.setString(3, expense.getCategory());
 	        stmt.setString(4, expense.getDescription());
 	        stmt.executeUpdate();
+	        Expense expenseInDb = findAllExpenses().getLast();
 
-	        return expense;
+	        return expenseInDb;
 	    } catch (SQLException e) {
 			e.printStackTrace();
 			return null;
