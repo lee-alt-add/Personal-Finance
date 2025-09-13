@@ -11,7 +11,7 @@ import java.sql.SQLException;
 public class APIHandler {
 
 	static DatabaseManager manager = new DatabaseManager();
-	static UserDao repo = new UserDao(manager.getConnection());
+	static MainDao repo = new MainDao(manager.getConnection());
 	static Tables userTable = new Tables(manager.getConnection());
 	
 	public static void initializeDB() {
@@ -25,7 +25,7 @@ public class APIHandler {
 	public static void saveUser(Context context) {
 		try {
 			User user = context.bodyAsClass(User.class);
-			User userInDb = repo.save(user);
+			User userInDb = repo.userDao.save(user);
 			context.status(201).json(userInDb);
 		} catch (Exception e) {
 			context.status(404);
@@ -33,13 +33,13 @@ public class APIHandler {
 	}
 
 	public static void findAllUsers(Context context) {
-		context.status(201).json(repo.findAll());
+		context.status(201).json(repo.userDao.findAll());
 	}
 
 	public static void removeUser(Context context) {
 		try {
 			int id = Integer.parseInt(context.pathParam("id"));
-			User user = repo.removeUserById(id);
+			User user = repo.userDao.removeUserById(id);
 			context.status(200).json(user);
 		} catch (Exception e) {
 			context.status(404);
