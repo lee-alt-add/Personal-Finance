@@ -14,7 +14,7 @@ import java.util.*;
 import com.fintrack.db.DatabaseManager;
 import com.fintrack.dao.User;
 
-public class UserRepositoryTest {
+public class UserDaoTest {
 	private static DatabaseManager manager;
 
     /**
@@ -38,42 +38,42 @@ public class UserRepositoryTest {
     @Test
     public void saveUserTest() throws SQLException {
         Tables tables = new Tables(manager.getConnection());
-        UserRepository userRepo = new UserRepository(manager.getConnection());
+        UserDao userDao = new UserDao(manager.getConnection());
         User user = new User(1,"John", "john@doe.com");
 
         assertTrue(tables.createUsers());
-        assertNotNull(userRepo.save(user));
-        assertNotNull(userRepo.removeUserById(1));
+        assertNotNull(userDao.save(user));
+        assertNotNull(userDao.removeUserById(1));
     }
 
     @Test
     public void findAllUsersTest() throws SQLException {
         Tables tables = new Tables(manager.getConnection());
-        UserRepository userRepo = new UserRepository(manager.getConnection());
+        UserDao userDao = new UserDao(manager.getConnection());
         User user = new User(1,"John", "john@doe.com");
         User userTwo = new User(2,"Jane", "jane@doe.com");
 
         assertTrue(tables.createUsers());
-        assertNotNull(userRepo.save(user));
-        assertNotNull(userRepo.save(userTwo));
+        assertNotNull(userDao.save(user));
+        assertNotNull(userDao.save(userTwo));
 
-        List<User> users = userRepo.findAll();
+        List<User> users = userDao.findAll();
         assertEquals(2, users.size());
         assertTrue(users.getFirst().getName().equals("John"));
         assertTrue(users.getLast().getName().equals("Jane"));
-        assertNotNull(userRepo.removeUserById(1));
-        assertNotNull(userRepo.removeUserById(2));
-        assertTrue(userRepo.findAll().isEmpty());
+        assertNotNull(userDao.removeUserById(1));
+        assertNotNull(userDao.removeUserById(2));
+        assertTrue(userDao.findAll().isEmpty());
     }
 
     @Test
     public void removeUserTest() throws SQLException {
         Tables tables = new Tables(manager.getConnection());
-        UserRepository userRepo = new UserRepository(manager.getConnection());
+        UserDao userDao = new UserDao(manager.getConnection());
         User user = new User(1,"John", "john@doe.com");
 
         assertTrue(tables.createUsers());
-        assertNotNull(userRepo.save(user));
-        assertNotNull(userRepo.removeUserById(1));
+        assertNotNull(userDao.save(user));
+        assertNotNull(userDao.removeUserById(1));
     }
 }

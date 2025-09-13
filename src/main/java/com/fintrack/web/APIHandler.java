@@ -11,7 +11,7 @@ import java.sql.SQLException;
 public class APIHandler {
 
 	static DatabaseManager manager = new DatabaseManager();
-	static UserRepository repo = new UserRepository(manager.getConnection());
+	static UserDao repo = new UserDao(manager.getConnection());
 	static Tables userTable = new Tables(manager.getConnection());
 	
 	public static void initializeDB() {

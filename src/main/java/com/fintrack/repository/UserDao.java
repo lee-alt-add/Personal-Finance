@@ -6,11 +6,11 @@ import java.util.*;
 import com.fintrack.dao.User;
 
 
-public class UserRepository {
+public class UserDao {
 
 	private final Connection connection;
 
-	public UserRepository(Connection connection) {
+	public UserDao(Connection connection) {
 		this.connection = connection;
 	}
 
