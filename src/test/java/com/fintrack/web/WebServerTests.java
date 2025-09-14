@@ -26,6 +26,7 @@ public class WebServerTests {
     @BeforeAll
     public static void startServer() {
         server = new WebServer();
+        server.setDatabaseManager("memory");
         server.start(8080);
         tables = new Tables(server.getDBConnection());
         tables.createUsers();

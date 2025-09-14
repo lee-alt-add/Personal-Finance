@@ -27,6 +27,7 @@ public class ExpenseServiceTest {
     @BeforeAll
     public static void startServer() {
         server = new WebServer();
+        server.setDatabaseManager("memory");
         server.start(5000);
         tables = new Tables(server.getDBConnection());
         tables.createUsers();

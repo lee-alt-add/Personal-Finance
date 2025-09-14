@@ -10,12 +10,12 @@ import com.fintrack.web.service.*;
 
 public class WebServer {
 	private Javalin javalin;
-	private DatabaseManager manager = new DatabaseManager();
+	private DatabaseManager manager;
+	private ExpenseService expenseService;
+	private UserService userService;
 
 
 	public WebServer() {
-
-		this.setServiceConnections();
 
 		this.javalin = Javalin.create(config -> {
 			config.defaultContentType = "application/json";
@@ -24,18 +24,22 @@ public class WebServer {
 
 		this.javalin.get("/health", ctx -> APIHandler.getHealth(ctx));
 
-        this.javalin.post("/users", ctx -> UserService.saveUser(ctx));
+        this.javalin.post("/users", ctx -> userService.saveUser(ctx));
 
-        this.javalin.delete("/users/{id}", ctx -> UserService.removeUser(ctx));
+        this.javalin.delete("/users/{id}", ctx -> userService.removeUser(ctx));
 
-        this.javalin.get("/all", ctx -> UserService.findAllUsers(ctx));
+        this.javalin.get("/all", ctx -> userService.findAllUsers(ctx));
 
-        this.javalin.post("/users/{id}/expenses", ctx -> ExpenseService.addUserExpense(ctx));
+        this.javalin.post("/users/{id}/expenses", ctx -> expenseService.addUserExpense(ctx));
 	}
 
 	public void setDatabaseManager(String databaseUrl) {
-		manager = new DatabaseManager(databaseUrl);
-		this.setServiceConnections();
+		manager = databaseUrl.toLowerCase().trim().equals("memory") ?
+				  new DatabaseManager() :
+				  new DatabaseManager(databaseUrl);
+
+		expenseService = new ExpenseService(manager.getConnection());
+		userService = new UserService(manager.getConnection());
 	}
 
 	public Connection getDBConnection() {
@@ -49,11 +53,6 @@ public class WebServer {
 	public void stop() {
 		this.javalin.close();
 		this.javalin.stop();
-	}
-
-	private void setServiceConnections() {
-		UserService.setDatabaseConnection(manager.getConnection());
-		ExpenseService.setDatabaseConnection(manager.getConnection());
 	}
 
 	public static void main(String[] args) {

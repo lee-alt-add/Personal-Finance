@@ -10,13 +10,13 @@ import com.fintrack.db.DatabaseManager;
 
 
 public class UserService {
-	private static UserDao userDao = new UserDao(new DatabaseManager().getConnection());
+	private UserDao userDao;
 
-	public static void setDatabaseConnection(Connection connection) {
+	public UserService(Connection connection) {
 		userDao = new UserDao(connection);
 	}
 
-	public static void saveUser(Context context) {
+	public void saveUser(Context context) {
 		try {
 			User user = context.bodyAsClass(User.class);
 			User userInDb = userDao.save(user);
@@ -26,11 +26,11 @@ public class UserService {
 		}
 	}
 
-	public static void findAllUsers(Context context) {
+	public void findAllUsers(Context context) {
 		context.status(200).json(userDao.findAll());
 	}
 
-	public static void removeUser(Context context) {
+	public void removeUser(Context context) {
 		try {
 			int id = Integer.parseInt(context.pathParam("id"));
 			User user = userDao.removeUserById(id);

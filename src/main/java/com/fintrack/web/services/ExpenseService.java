@@ -6,16 +6,15 @@ import java.sql.Connection;
 
 import com.fintrack.entity.*;
 import com.fintrack.repository.*;
-import com.fintrack.db.DatabaseManager;
 
 public class ExpenseService {
-	private static ExpenseDao expenseDao = new ExpenseDao(new DatabaseManager().getConnection());
+	private ExpenseDao expenseDao;
 
-	public static void setDatabaseConnection(Connection connection) {
+	public ExpenseService(Connection connection) {
 		expenseDao = new ExpenseDao(connection);
 	}
 
-	public static void addUserExpense(Context context) {
+	public void addUserExpense(Context context) {
 		try {
 			int id = Integer.parseInt(context.pathParam("id"));
 			Expense expense = context.bodyAsClass(Expense.class);
