@@ -9,7 +9,16 @@ import kong.unirest.json.JSONObject;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.*;
+import com.fintrack.entity.*;
+
 public class TestUtilities {
+
+    /*
+    * ---------
+    * Requests
+    * ---------
+    */
 	public static HttpResponse<JsonNode> addUserRequest(int port, String name, String email) {
         String userInfo = "{\"name\":\"%s\", \"email\":\"%s\"}".formatted(name, email);
         String url = "http://localhost:%d/users".formatted(port);
@@ -45,6 +54,31 @@ public class TestUtilities {
         return Unirest.post(url).body(expenseInfo).asJson();
     }
 
+    public static HttpResponse<JsonNode> removeExpenseRequest(int port, int expenseId) {
+        String url = "http://localhost:%d/users/%d/expenses".formatted(port, expenseId);
+        return Unirest.delete(url).asJson();
+    }
+
+    public static HttpResponse<JsonNode> getUserExpensesRequest(int port, int userId) {
+        String url = "http://localhost:%d/users/%d/expenses".formatted(port, userId);
+        return Unirest.get(url).asJson();
+    }
+
+
+    /*
+    * ---------
+    * Testers
+    * ---------
+    */
+
+    public static void testGetUserExpenses(int port, int userId, List<Expense> itemsAdded) {
+        HttpResponse<JsonNode> response = getUserExpensesRequest(port, userId);
+        assertEquals(200, response.getStatus());
+
+        JSONArray jsonArray = response.getBody().getArray();
+        assertEquals(itemsAdded.size(), jsonArray.length());
+    }
+
     public static HttpResponse<JsonNode> testAddUser(int port, String name, String email) {
         HttpResponse<JsonNode> response = addUserRequest(port, name, email);
         assertEquals(200, response.getStatus());
@@ -65,11 +99,6 @@ public class TestUtilities {
         assertEquals(name, userData.get("name"));
         assertEquals(email, userData.get("email"));
         assertEquals(userId, userData.getInt("id"));
-    }
-
-    private static HttpResponse<JsonNode> removeExpenseRequest(int port, int expenseId) {
-        String url = "http://localhost:%d/users/%d/expenses".formatted(port, expenseId);
-        return Unirest.delete(url).asJson();
     }
 
     public static void testRemoveUser(int port, int id) {

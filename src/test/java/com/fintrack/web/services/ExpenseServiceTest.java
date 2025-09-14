@@ -8,13 +8,19 @@ import kong.unirest.json.JSONArray;
 import kong.unirest.json.JSONObject;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import java.time.LocalDateTime;
+import java.sql.Timestamp;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.fintrack.repository.Tables;
 import com.fintrack.web.WebServer;
+import com.fintrack.entity.*;
 
 public class ExpenseServiceTest {
 	private static WebServer server;
@@ -29,9 +35,17 @@ public class ExpenseServiceTest {
         server.setDatabaseManager("memory");
         server.start(0);
         tables = new Tables(server.getDBConnection());
-        tables.createUsers();
+    }
+
+    @BeforeEach
+    public void makeTable() {
         tables.createExpenses();
     }
+
+    // @AfterEach
+    // public void discardTables() {
+    //     tables.deleteTables();
+    // }
 
     /**
      * Stop the app server once all tests are run
@@ -43,17 +57,25 @@ public class ExpenseServiceTest {
 
     @Test
     public void addExpenseTest() {
-    	HttpResponse<JsonNode> userResponse = TestUtilities.addUserRequest(server.getPort(), "John", "john@doe.com");
+        TestUtilities.testAddExpense(server.getPort(), 1, 70.00, "Food", "Lunch");
+        assertTrue(tables.deleteTable("expenses"));
+    }
 
-        int userId = TestUtilities.getDatabaseId(userResponse);
+    @Test
+    public void removeExpenseByIdTest() {
+        Expense expense = new Expense(1, 1, 375.00, "Transport", "To work", Timestamp.valueOf(LocalDateTime.now()));
+        tables.insertInto(expense);
+        TestUtilities.testRemoveExpense(server.getPort(), 1);
+        assertTrue(tables.deleteTable("expenses"));
+    }
 
-        HttpResponse<JsonNode> expenseResponse = TestUtilities.testAddExpense(server.getPort(), userId, 70.00, "Food", "Lunch");
+    @Test
+    public void getUserExpensesTest() {
+        Expense expense = new Expense(1, 1, 375.00, "Transport", "To work", Timestamp.valueOf(LocalDateTime.now()));
+        Expense expense2 = new Expense(2, 1, 375.00, "Transport", "To work", Timestamp.valueOf(LocalDateTime.now()));
+        tables.insertInto(expense);
+        tables.insertInto(expense2);
 
-        // Remove user
-        TestUtilities.testRemoveUser(server.getPort(), userId);
-
-        // Remove expense
-        int expenseId = TestUtilities.getDatabaseId(expenseResponse);
-        TestUtilities.testRemoveExpense(server.getPort(), expenseId);
+        TestUtilities.testGetUserExpenses(server.getPort(), 1, List.of(expense, expense2));
     }
 }
