@@ -70,12 +70,28 @@ public class TestUtilities {
         return Unirest.post(url).body(expenseInfo).asJson();
     }
 
+    public static HttpResponse<JsonNode> removeIncomeRequest(int port, int incomeId) {
+        String url = "http://localhost:%d/users/%d/income".formatted(port, incomeId);
+        return Unirest.delete(url).asJson();
+    }
+
 
     /*
     * ---------
     * Testers
     * ---------
     */
+
+    public static void testRemoveIncome(int port, int incomeId) {
+        HttpResponse<JsonNode> removalResponse = removeIncomeRequest(port, incomeId);
+        assertEquals(200, removalResponse.getStatus());
+    }
+
+
+    public static void testRemoveExpense(int port, int expenseId) {
+        HttpResponse<JsonNode> removalResponse = removeExpenseRequest(port, expenseId);
+        assertEquals(200, removalResponse.getStatus());
+    }
 
     public static void testAddIncome(int port, int userId, Income income) {
         HttpResponse<JsonNode> response = addIncomeRequest(port, userId, income);
@@ -140,10 +156,5 @@ public class TestUtilities {
         }
         
         return jsonObject.getInt("id");
-    }
-
-    public static void testRemoveExpense(int port, int expenseId) {
-        HttpResponse<JsonNode> removalResponse = removeExpenseRequest(port, expenseId);
-        assertEquals(200, removalResponse.getStatus());
     }
 }

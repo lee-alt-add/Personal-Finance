@@ -62,4 +62,12 @@ public class IncomeServiceTest {
     	TestUtilities.testAddIncome(server.getPort(), 1, income);
     	assertTrue(tables.deleteTable("income"));
     }
+
+    @Test
+    public void removeIncomeByIdTest() {
+        Income income = new Income(1, 10000.00, "salary");
+        tables.insertInto(income);
+        TestUtilities.testRemoveIncome(server.getPort(), 1);
+        assertTrue(tables.deleteTable("income"));
+    }
 }
