@@ -44,7 +44,7 @@ public class IncomeDao {
 					results.getInt("user_id"),
 					results.getDouble("amount"),
 					results.getString("source"),
-					results.getTimestamp("date").toLocalDateTime()
+					results.getTimestamp("date")
 				));
 			}
 			return allIncome;

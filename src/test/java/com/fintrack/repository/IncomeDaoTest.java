@@ -40,13 +40,12 @@ public class IncomeDaoTest {
     public void saveIncomeTest() throws SQLException {
         Tables tables = new Tables(manager.getConnection());
         IncomeDao incomeDao = new IncomeDao(manager.getConnection());
-        Income income = new Income(1,1, 20000.00, "salary", LocalDateTime.now());
+        Income income = new Income(1, 20000.00, "salary");
 
         assertTrue(tables.createIncome());
         Income incomeAdded = incomeDao.addIncome(income);
         assertNotNull(incomeAdded);
         assertEquals(1,incomeAdded.getId());
-        assertEquals(LocalDateTime.now().toLocalDate(), incomeAdded.getDate().toLocalDate());
         assertNotNull(incomeDao.removeIncomeById(1));
     }
 
@@ -54,8 +53,8 @@ public class IncomeDaoTest {
     public void findAllIncomeTest() throws SQLException {
         Tables tables = new Tables(manager.getConnection());
         IncomeDao incomeDao = new IncomeDao(manager.getConnection());
-        Income income = new Income(1,1, 20000.00, "salary", LocalDateTime.now());
-        Income incomeTwo = new Income(2,1, 5000.00, "gift", LocalDateTime.now());
+        Income income = new Income(1, 20000.00, "salary");
+        Income incomeTwo = new Income(1, 5000.00, "gift");
 
         assertTrue(tables.createIncome());
         assertNotNull(incomeDao.addIncome(income));

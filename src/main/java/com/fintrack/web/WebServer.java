@@ -11,8 +11,9 @@ import com.fintrack.web.service.*;
 public class WebServer {
 	private Javalin javalin;
 	private DatabaseManager manager;
-	private ExpenseService expenseService;
 	private UserService userService;
+	private ExpenseService expenseService;
+	private IncomeService incomeService;
 
 
 	public WebServer() {
@@ -32,11 +33,19 @@ public class WebServer {
 
         this.javalin.get("/all", ctx -> userService.findAllUsers(ctx));
 
+        /* ------- */
+        // Expenses
+        /* ------- */
         this.javalin.post("/users/{id}/expenses", ctx -> expenseService.addUserExpense(ctx));
 
         this.javalin.delete("users/{id}/expenses", ctx -> expenseService.removeExpenseById(ctx));
 
         this.javalin.get("users/{id}/expenses", ctx -> expenseService.getUserExpenses(ctx));
+
+        /* ------- */
+        // Income
+        /* ------- */
+        this.javalin.post("users/{id}/income", ctx -> incomeService.addUserIncome(ctx));
 	}
 
 	public void setDatabaseManager(String databaseUrl) {
@@ -46,6 +55,7 @@ public class WebServer {
 
 		expenseService = new ExpenseService(manager.getConnection());
 		userService = new UserService(manager.getConnection());
+		incomeService = new IncomeService(manager.getConnection());
 	}
 
 	public Connection getDBConnection() {

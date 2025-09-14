@@ -22,7 +22,8 @@ import com.fintrack.repository.Tables;
 import com.fintrack.web.WebServer;
 import com.fintrack.entity.*;
 
-public class ExpenseServiceTest {
+
+public class IncomeServiceTest {
 	private static WebServer server;
     private static Tables tables;
 
@@ -39,7 +40,7 @@ public class ExpenseServiceTest {
 
     @BeforeEach
     public void makeTable() {
-        tables.createExpenses();
+        tables.createIncome();
     }
 
     // @AfterEach
@@ -56,28 +57,9 @@ public class ExpenseServiceTest {
     }
 
     @Test
-    public void addExpenseTest() {
-        Expense expense = new Expense(1, 70.00, "Food", "Lunch");
-        TestUtilities.testAddExpense(server.getPort(), 1, expense);
-        assertTrue(tables.deleteTable("expenses"));
-    }
-
-    @Test
-    public void removeExpenseByIdTest() {
-        Expense expense = new Expense(1, 375.00, "Transport", "To work");
-        tables.insertInto(expense);
-        TestUtilities.testRemoveExpense(server.getPort(), 1);
-        assertTrue(tables.deleteTable("expenses"));
-    }
-
-    @Test
-    public void getUserExpensesTest() {
-        Expense expense = new Expense(1, 375.00, "Transport", "To work");
-        Expense expense2 = new Expense(1, 375.00, "Transport", "To work");
-        tables.insertInto(expense);
-        tables.insertInto(expense2);
-
-        TestUtilities.testGetUserExpenses(server.getPort(), 1, List.of(expense, expense2));
-        assertTrue(tables.deleteTable("expenses"));
+    public void addIncomeTest() {
+    	Income income = new Income(1, 10000.00, "salary");
+    	TestUtilities.testAddIncome(server.getPort(), 1, income);
+    	assertTrue(tables.deleteTable("income"));
     }
 }

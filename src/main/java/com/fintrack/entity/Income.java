@@ -1,20 +1,27 @@
 package com.fintrack.entity;
 
 import java.time.LocalDateTime;
+import java.sql.Timestamp;
 
 public class Income {
     private int id;
     private int userId;
     private double amount;
     private String source;
-    private LocalDateTime date;
+    private Timestamp date;
 
-    public Income(int id, int userId, double amount, String source, LocalDateTime date) {
+    public Income(int id, int userId, double amount, String source, Timestamp date) {
         this.id = id;
         this.userId = userId;
         this.amount = amount;
         this.source = source;
         this.date = date;
+    }
+
+    public Income(int userId, double amount, String source) {
+        this.userId = userId;
+        this.amount = amount;
+        this.source = source;
     }
 
     public Income() {}
@@ -35,7 +42,7 @@ public class Income {
         this.source = source;
     }
 
-    public void setDate(LocalDateTime date) {
+    public void setDate(Timestamp date) {
         this.date = date;
     }
 
@@ -47,5 +54,5 @@ public class Income {
 
     public String getSource() { return source; }
 
-    public LocalDateTime getDate() { return date; }
+    public Timestamp getDate() { return date; }
 }

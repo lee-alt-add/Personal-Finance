@@ -40,15 +40,13 @@ public class TestUtilities {
         return Unirest.delete(url).asJson();
     }
 
-    public static HttpResponse<JsonNode> addExpenseRequest(
-    	int port, 
-    	int userId, 
-    	double amount, 
-    	String category, 
-    	String description
-    ) {
+    public static HttpResponse<JsonNode> addExpenseRequest(int port, int userId, Expense expense) {
     	String expenseInfo = "{\"amount\":%.2f%n,\"category\":\"%s\",\"description\":\"%s\"}"
-    						 .formatted(amount, category, description);
+                .formatted(
+                    expense.getAmount(), 
+                    expense.getCategory(), 
+                    expense.getDescription()
+                );
 
         String url = "http://localhost:%d/users/%d/expenses".formatted(port, userId);
         return Unirest.post(url).body(expenseInfo).asJson();
@@ -64,12 +62,28 @@ public class TestUtilities {
         return Unirest.get(url).asJson();
     }
 
+    public static HttpResponse<JsonNode> addIncomeRequest(int port, int userId, Income income) {
+        String expenseInfo = "{\"amount\":%.2f%n,\"source\":\"%s\"}"
+                             .formatted(income.getAmount(), income.getSource());
+
+        String url = "http://localhost:%d/users/%d/income".formatted(port, userId);
+        return Unirest.post(url).body(expenseInfo).asJson();
+    }
+
 
     /*
     * ---------
     * Testers
     * ---------
     */
+
+    public static void testAddIncome(int port, int userId, Income income) {
+        HttpResponse<JsonNode> response = addIncomeRequest(port, userId, income);
+        assertEquals(200, response.getStatus());
+
+        JSONObject jsonObject = response.getBody().getObject();
+        assertTrue(income.getSource().equals(jsonObject.get("source")));
+    }
 
     public static void testGetUserExpenses(int port, int userId, List<Expense> itemsAdded) {
         HttpResponse<JsonNode> response = getUserExpensesRequest(port, userId);
@@ -107,19 +121,13 @@ public class TestUtilities {
         assertEquals(200, removalResponse.getStatus());
     }
 
-    public static HttpResponse<JsonNode> testAddExpense(
-    	int port, 
-    	int userId, 
-    	double amount, 
-    	String category, 
-    	String description
-    ) {
-        HttpResponse<JsonNode> response = addExpenseRequest(port, userId, amount, category, description);
+    public static HttpResponse<JsonNode> testAddExpense(int port, int userId, Expense expense) {
+        HttpResponse<JsonNode> response = addExpenseRequest(port, userId, expense);
         assertEquals(200, response.getStatus());
 
         JSONObject jsonObject = response.getBody().getObject();
-        assertEquals(category, jsonObject.get("category"));
-        assertEquals(description, jsonObject.get("description"));
+        assertEquals(expense.getCategory(), jsonObject.get("category"));
+        assertEquals(expense.getDescription(), jsonObject.get("description"));
 
         return response;
     }
