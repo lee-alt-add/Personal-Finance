@@ -28,7 +28,7 @@ public class ExpenseServiceTest {
     public static void startServer() {
         server = new WebServer();
         server.setDatabaseManager("memory");
-        server.start(5000);
+        server.start(0);
         tables = new Tables(server.getDBConnection());
         tables.createUsers();
         tables.createExpenses();
@@ -60,17 +60,18 @@ public class ExpenseServiceTest {
     }
 
     private HttpResponse<JsonNode> addUser(String userInfo) {
-        String url = "http://localhost:5000/users";
+        String url = "http://localhost:%d/users".formatted(server.getPort());
         return Unirest.post(url).body(userInfo).asJson();
     }
 
     private HttpResponse<JsonNode> addExpense(String expenseInfo, int userId) {
-        String url = "http://localhost:5000/users/%d/expenses".formatted(userId);
+        String url = "http://localhost:%d/users/%d/expenses".formatted(server.getPort(), userId);
         return Unirest.post(url).body(expenseInfo).asJson();
     }
 
     private HttpResponse<JsonNode> removeUser(int id) {
-        String url = "http://localhost:5000/users/" + id;
+        int port = server.getPort();
+        String url = "http://localhost:%d/users/%d".formatted(port, id);
         return Unirest.delete(url).asJson();
     }
 

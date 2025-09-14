@@ -46,6 +46,10 @@ public class WebServer {
 		return this.manager.getConnection();
 	}
 
+	public int getPort() {
+		return this.javalin.port();
+	}
+
 	public void start(int port) {
 		this.javalin.start(port);
 	}
