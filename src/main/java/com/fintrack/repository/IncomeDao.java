@@ -55,6 +55,31 @@ public class IncomeDao {
 		}
 	}
 
+	public List<Income> findIncomeByUserId(int id) {
+		List<Income> allIncome = new ArrayList<>();
+		String sql = "SELECT * FROM income WHERE income.user_id = ?;";
+
+		try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+			stmt.setInt(1, id);
+			ResultSet results = stmt.executeQuery();
+
+			while (results.next()) {
+				allIncome.add(new Income (
+					results.getInt("id"),
+					results.getInt("user_id"),
+					results.getDouble("amount"),
+					results.getString("source"),
+					results.getTimestamp("date")
+				));
+			}
+			return allIncome;
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return allIncome;
+		}
+	}
+
 	public Income removeIncomeById(int id) {
 		String sql = "DELETE FROM income WHERE income.id = ?;";
 

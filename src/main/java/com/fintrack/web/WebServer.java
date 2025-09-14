@@ -48,6 +48,8 @@ public class WebServer {
         this.javalin.post("users/{id}/income", ctx -> incomeService.addUserIncome(ctx));
 
         this.javalin.delete("users/{id}/income", ctx -> incomeService.removeIncomeById(ctx));
+
+        this.javalin.get("users/{id}/income", ctx -> incomeService.getUserIncome(ctx));
 	}
 
 	public void setDatabaseManager(String databaseUrl) {

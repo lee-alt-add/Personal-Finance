@@ -75,12 +75,25 @@ public class TestUtilities {
         return Unirest.delete(url).asJson();
     }
 
+    public static HttpResponse<JsonNode> getUserIncomeRequest(int port, int userId) {
+        String url = "http://localhost:%d/users/%d/income".formatted(port, userId);
+        return Unirest.get(url).asJson();
+    }
+
 
     /*
     * ---------
     * Testers
     * ---------
     */
+
+    public static void testGetUserIncome(int port, int userId, List<Income> itemsAdded) {
+        HttpResponse<JsonNode> response = getUserIncomeRequest(port, userId);
+        assertEquals(200, response.getStatus());
+
+        JSONArray jsonArray = response.getBody().getArray();
+        assertEquals(itemsAdded.size(), jsonArray.length());
+    }
 
     public static void testRemoveIncome(int port, int incomeId) {
         HttpResponse<JsonNode> removalResponse = removeIncomeRequest(port, incomeId);
