@@ -67,6 +67,11 @@ public class TestUtilities {
         assertEquals(userId, userData.getInt("id"));
     }
 
+    private static HttpResponse<JsonNode> removeExpenseRequest(int port, int expenseId) {
+        String url = "http://localhost:%d/users/%d/expenses".formatted(port, expenseId);
+        return Unirest.delete(url).asJson();
+    }
+
     public static void testRemoveUser(int port, int id) {
         // Get id (as per the database) of user that was saved
         HttpResponse<JsonNode> removalResponse = removeUserRequest(port, id);
@@ -98,5 +103,10 @@ public class TestUtilities {
         }
         
         return jsonObject.getInt("id");
+    }
+
+    public static void testRemoveExpense(int port, int expenseId) {
+        HttpResponse<JsonNode> removalResponse = removeExpenseRequest(port, expenseId);
+        assertEquals(200, removalResponse.getStatus());
     }
 }

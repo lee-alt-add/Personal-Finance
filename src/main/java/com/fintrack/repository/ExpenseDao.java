@@ -56,8 +56,30 @@ public class ExpenseDao {
 		}
 	}
 
-	public List<Expense> findAllExpensesById(int id) {
-		return findAllExpenses().stream().filter(e -> e.getId() == id).toList();
+	public List<Expense> findAllExpensesByUserId(int id) {
+		List<Expense> allExpenses = new ArrayList<>();
+		String sql = "SELECT * FROM expenses WHERE expenses.user_id = ?;";
+
+		try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+			stmt.setInt(1, id);
+			ResultSet results = stmt.executeQuery();
+
+			while (results.next()) {
+				allExpenses.add(new Expense (
+					results.getInt("id"),
+					results.getInt("user_id"),
+					results.getDouble("amount"),
+					results.getString("category"),
+					results.getString("description"),
+					results.getTimestamp("date")
+				));
+			}
+			return allExpenses;
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return allExpenses;
+		}
 	}
 
 	public Expense removeExpenseById(int id) {

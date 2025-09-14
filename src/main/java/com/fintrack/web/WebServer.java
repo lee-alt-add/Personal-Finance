@@ -33,6 +33,8 @@ public class WebServer {
         this.javalin.get("/all", ctx -> userService.findAllUsers(ctx));
 
         this.javalin.post("/users/{id}/expenses", ctx -> expenseService.addUserExpense(ctx));
+
+        this.javalin.delete("users/{id}/expenses", ctx -> expenseService.removeExpenseById(ctx));
 	}
 
 	public void setDatabaseManager(String databaseUrl) {

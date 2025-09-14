@@ -43,13 +43,17 @@ public class ExpenseServiceTest {
 
     @Test
     public void addExpenseTest() {
-    	HttpResponse<JsonNode> userResponse = TestUtilities.testAddUser(server.getPort(), "John", "john@doe.com");
+    	HttpResponse<JsonNode> userResponse = TestUtilities.addUserRequest(server.getPort(), "John", "john@doe.com");
 
         int userId = TestUtilities.getDatabaseId(userResponse);
 
-        TestUtilities.testAddExpense(server.getPort(), userId, 70.00, "Food", "Lunch");
+        HttpResponse<JsonNode> expenseResponse = TestUtilities.testAddExpense(server.getPort(), userId, 70.00, "Food", "Lunch");
 
         // Remove user
         TestUtilities.testRemoveUser(server.getPort(), userId);
+
+        // Remove expense
+        int expenseId = TestUtilities.getDatabaseId(expenseResponse);
+        TestUtilities.testRemoveExpense(server.getPort(), expenseId);
     }
 }

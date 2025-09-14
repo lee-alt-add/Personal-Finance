@@ -22,7 +22,28 @@ public class ExpenseService {
 			Expense savedExpense = expenseDao.addExpense(expense);
 			context.status(200).json(savedExpense);
 		} catch (Exception e) {
+			context.status(404);
 			context.result(e.getMessage());
+		}
+	}
+
+	public void getUserExpenses(Context context) {
+		try {
+			int id = Integer.parseInt(context.pathParam("id"));
+			List<Expense> expenses = expenseDao.findAllExpensesByUserId(id);
+			context.status(200).json(expenses);
+		} catch (Exception e) {
+			context.status(404);
+		}
+	}
+
+	public void removeExpenseById(Context context) {
+		try {
+			int id = Integer.parseInt(context.pathParam("id"));
+			Expense expense = expenseDao.removeExpenseById(id);
+			context.status(200).json(expense);
+		} catch (Exception e) {
+			context.status(404);
 		}
 	}
 }
