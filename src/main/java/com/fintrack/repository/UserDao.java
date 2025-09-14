@@ -47,8 +47,7 @@ public class UserDao {
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return allUsers;
-		}
-		
+		}	
 	}
 
 	public User removeUserById(int id) {
@@ -59,6 +58,28 @@ public class UserDao {
 			User user = findAll().stream().filter(e -> e.getId() == id).toList().getFirst();
 			stmt.executeUpdate();
 			return user;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	public User getUserById(int id) {
+		String sql = "SELECT * FROM users WHERE users.id = ?;";
+
+		try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+			stmt.setInt(1, id);
+			try (ResultSet s = stmt.executeQuery()) {
+				if (s.next()) {
+					return new User (
+						s.getInt("id"),
+						s.getString("name"),
+						s.getString("email")
+					);
+				} else {
+					return null;
+				}
+			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return null;

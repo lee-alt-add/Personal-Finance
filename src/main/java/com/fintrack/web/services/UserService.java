@@ -26,6 +26,16 @@ public class UserService {
 		}
 	}
 
+	public void getUser(Context context) {
+		try {
+			int id = Integer.parseInt(context.pathParam("id"));
+			User user = userDao.getUserById(id);
+			context.status(200).json(user);
+		} catch (Exception e) {
+			context.status(404);
+		}
+	}
+
 	public void findAllUsers(Context context) {
 		context.status(200).json(userDao.findAll());
 	}
