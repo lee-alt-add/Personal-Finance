@@ -3,6 +3,8 @@ package com.fintrack.repository;
 import java.sql.*;
 import java.util.*;
 
+import com.fintrack.entity.*;
+
 public class Tables {
 	private Connection connection;
 
@@ -22,6 +24,60 @@ public class Tables {
         }
         return false;
 	}
+
+	public boolean insertInto(Object obj) {
+        if (obj instanceof Expense expense) {
+            String sql = """
+                    INSERT INTO expenses (user_id, amount, category, description)
+                        VALUES ('%d', '%.2f%n', '%s', '%s');
+                    """.formatted(
+                    	expense.getUserId(), 
+                    	expense.getAmount(), 
+                    	expense.getCategory(), 
+                    	expense.getDescription()
+                    );
+            return executeSql(sql);
+        } 
+        else if (obj instanceof Income income) {
+            String sql = """
+                    INSERT INTO income (user_id, amount, source)
+                        VALUES ('%d', '%.2f%n', '%s');
+                    """.formatted(
+                    	income.getUserId(), 
+                    	income.getAmount(), 
+                    	income.getSource()
+                    );
+
+            return executeSql(sql);
+        }
+        else if (obj instanceof User user) {
+        	String sql = """
+		        	INSERT INTO users (name, email) 
+		        	VALUES ('%s', '%s');
+		        	""".formatted(
+		        		user.getName(), 
+		        		user.getEmail()
+		        	);
+		    return executeSql(sql);
+        }
+
+        return false;
+    }
+
+    public boolean deleteTable(String tableName) {
+		String sql = "DROP TABLE %s;".formatted(tableName);
+		return executeSql(sql);
+    }
+
+    private boolean executeSql(String sql) {
+        try (final PreparedStatement s = connection.prepareStatement(sql)) {
+            int result = s.executeUpdate();
+            return result == 1;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 
 	public boolean createUsers() {
 		String sql = """
