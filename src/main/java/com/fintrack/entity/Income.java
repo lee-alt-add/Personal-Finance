@@ -3,7 +3,7 @@ package com.fintrack.entity;
 import java.time.LocalDateTime;
 import java.sql.Timestamp;
 
-public class Income {
+public class Income implements Timestamped {
     private int id;
     private int userId;
     private double amount;
@@ -54,5 +54,6 @@ public class Income {
 
     public String getSource() { return source; }
 
+    @Override
     public Timestamp getDate() { return date; }
 }

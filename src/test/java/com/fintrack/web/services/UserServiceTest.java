@@ -8,6 +8,8 @@ import kong.unirest.json.JSONArray;
 import kong.unirest.json.JSONObject;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -15,6 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.fintrack.repository.Tables;
 import com.fintrack.web.WebServer;
+import com.fintrack.entity.*;
 
 public class UserServiceTest {
 	private static WebServer server;
@@ -29,7 +32,7 @@ public class UserServiceTest {
         server.setDatabaseManager("memory");
         server.start(0);
         tables = new Tables(server.getDBConnection());
-        tables.createUsers();
+        
     }
 
     /**
@@ -40,19 +43,31 @@ public class UserServiceTest {
     	server.stop();
     }
 
+    @BeforeEach
+    public void makeTable() {
+        tables.createExpenses();
+        tables.createIncome();
+        tables.createUsers();
+    }
+
+    @AfterEach
+    public void discardTables() {
+        tables.deleteTable("expenses");
+        tables.deleteTable("income");
+        tables.deleteTable("users");
+    }
+
     @Test
     public void addUserTest() {
-        HttpResponse<JsonNode> response = TestUtilities.testAddUser(server.getPort(), "John", "john@doe.com");
-        int userId = TestUtilities.getDatabaseId(response);
-        TestUtilities.testRemoveUser(server.getPort(), userId);
+        User user = new User(1, "John", "john@doe.com");
+        HttpResponse<JsonNode> response = TestUtilities.testAddUser(server.getPort(), user);
     }
 
     @Test
     public void getUserTest() {
-        HttpResponse<JsonNode> response = TestUtilities.addUserRequest(server.getPort(), "John", "john@doe.com");
-        int userId = TestUtilities.getDatabaseId(response);
-        TestUtilities.testGetUser(server.getPort(), userId, "John", "john@doe.com");
-        TestUtilities.testRemoveUser(server.getPort(), userId);
+        User user = new User(1, "John", "john@doe.com");
+        tables.insertInto(user);
+        TestUtilities.testGetUser(server.getPort(), 1, user);
     }
 
     @Test
@@ -67,9 +82,12 @@ public class UserServiceTest {
 
     @Test
     public void findAllUsersTest() {
+        User user = new User(1, "John", "john@doe.com");
+        User user2 = new User(1, "Jane", "jane@doe.com");
+        
         // Adding user
-        TestUtilities.addUserRequest(server.getPort(), "John", "john@doe.com");
-        TestUtilities.addUserRequest(server.getPort(), "Jane", "jane@doe.com");
+        tables.insertInto(user);
+        tables.insertInto(user2);
 
         // Requesting all users added
         HttpResponse<JsonNode> response = TestUtilities.findAllUsersRequest(server.getPort());
@@ -78,13 +96,19 @@ public class UserServiceTest {
         JSONArray jsonArray = response.getBody().getArray();
         assertEquals(2, jsonArray.length());
         assertTrue(jsonArray.get(0).toString().contains("John"));
+    }
 
-        // Removing users
-        for (Object object : jsonArray) {
-            JSONObject jsonObject = (JSONObject) object;
-            int id = jsonObject.getInt("id");
-            HttpResponse<JsonNode> removalResponse = TestUtilities.removeUserRequest(server.getPort(), id);
-            assertEquals(200, removalResponse.getStatus());
-        }
+    @Test
+    public void getUserTransactionsTest() {
+        User user = new User(1, "John", "john@doe.com");
+        Income income = new Income(1, 10000.00, "salary");
+        Expense expense = new Expense(1, 70.00, "Food", "Lunch");
+
+        // Add to tables
+        tables.insertInto(income);
+        tables.insertInto(expense);
+        tables.insertInto(user);
+
+        TestUtilities.testGetUserTransations(server.getPort(), 1);
     }
 }

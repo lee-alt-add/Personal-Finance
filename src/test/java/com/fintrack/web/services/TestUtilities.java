@@ -19,8 +19,8 @@ public class TestUtilities {
     * Requests
     * ---------
     */
-	public static HttpResponse<JsonNode> addUserRequest(int port, String name, String email) {
-        String userInfo = "{\"name\":\"%s\", \"email\":\"%s\"}".formatted(name, email);
+	public static HttpResponse<JsonNode> addUserRequest(int port, User user) {
+        String userInfo = "{\"name\":\"%s\", \"email\":\"%s\"}".formatted(user.getName(), user.getEmail());
         String url = "http://localhost:%d/users".formatted(port);
         return Unirest.post(url).body(userInfo).asJson();
     }
@@ -80,12 +80,26 @@ public class TestUtilities {
         return Unirest.get(url).asJson();
     }
 
+    public static HttpResponse<JsonNode> getUserTransactionsRequest(int port, int userId) {
+        String url = "http://localhost:%d/users/%d/transactions".formatted(port, userId);
+        return Unirest.get(url).asJson();
+    }
+
 
     /*
     * ---------
     * Testers
     * ---------
     */
+    public static void testGetUserTransations(int port, int userId) {
+        HttpResponse<JsonNode> response = getUserTransactionsRequest(port, userId);
+        assertEquals(200, response.getStatus());
+        JSONArray jsonArray = response.getBody().getArray();
+        assertEquals(2, jsonArray.length());
+
+        JSONObject jsonObject = jsonArray.getJSONObject(0);
+        assertEquals("salary", jsonObject.get("source"));
+    }
 
     public static void testGetUserIncome(int port, int userId, List<Income> itemsAdded) {
         HttpResponse<JsonNode> response = getUserIncomeRequest(port, userId);
@@ -122,25 +136,25 @@ public class TestUtilities {
         assertEquals(itemsAdded.size(), jsonArray.length());
     }
 
-    public static HttpResponse<JsonNode> testAddUser(int port, String name, String email) {
-        HttpResponse<JsonNode> response = addUserRequest(port, name, email);
+    public static HttpResponse<JsonNode> testAddUser(int port, User user) {
+        HttpResponse<JsonNode> response = addUserRequest(port, user);
         assertEquals(200, response.getStatus());
 
         JSONObject jsonObject = response.getBody().getObject();
 
-        assertEquals(name, jsonObject.get("name"));
-        assertEquals(email, jsonObject.get("email"));
+        assertEquals(user.getName(), jsonObject.get("name"));
+        assertEquals(user.getEmail(), jsonObject.get("email"));
         return response;
     }
 
-    public static void testGetUser(int port, int userId, String name, String email) {
+    public static void testGetUser(int port, int userId, User user) {
         HttpResponse<JsonNode> response = getUserRequest(port, userId);
         assertEquals(200, response.getStatus());
 
         JSONObject userData = response.getBody().getObject();
 
-        assertEquals(name, userData.get("name"));
-        assertEquals(email, userData.get("email"));
+        assertEquals(user.getName(), userData.get("name"));
+        assertEquals(user.getEmail(), userData.get("email"));
         assertEquals(userId, userData.getInt("id"));
     }
 

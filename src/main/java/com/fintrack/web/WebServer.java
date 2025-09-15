@@ -25,6 +25,9 @@ public class WebServer {
 
 		this.javalin.get("/health", ctx -> APIHandler.getHealth(ctx));
 
+		/* ------- */
+        // User
+        /* ------- */
         this.javalin.post("/users", ctx -> userService.saveUser(ctx));
 
         this.javalin.get("/users/{id}", ctx -> userService.getUser(ctx));
@@ -50,6 +53,11 @@ public class WebServer {
         this.javalin.delete("users/{id}/income", ctx -> incomeService.removeIncomeById(ctx));
 
         this.javalin.get("users/{id}/income", ctx -> incomeService.getUserIncome(ctx));
+
+        /* ------------ */
+        // Transactions
+        /* ------------ */
+        this.javalin.get("/users/{id}/transactions", ctx -> userService.getUserTransactions(ctx));
 	}
 
 	public void setDatabaseManager(String databaseUrl) {
