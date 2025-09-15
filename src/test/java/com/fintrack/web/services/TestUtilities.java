@@ -85,12 +85,25 @@ public class TestUtilities {
         return Unirest.get(url).asJson();
     }
 
+    public static HttpResponse<JsonNode> getUserBalanceRequest(int port, int userId) {
+        String url = "http://localhost:%d/users/%d/balance".formatted(port, userId);
+        return Unirest.get(url).asJson();
+    }
+
 
     /*
     * ---------
     * Testers
     * ---------
     */
+    public static void testGetUserBalance(int port, int userId, double expectedBalance) {
+        HttpResponse<JsonNode> response = getUserBalanceRequest(port, userId);
+        assertEquals(200, response.getStatus());
+        JSONObject jsonObject = response.getBody().getObject();
+        assertEquals(expectedBalance, jsonObject.getDouble("amount"));
+    }
+
+
     public static void testGetUserTransations(int port, int userId) {
         HttpResponse<JsonNode> response = getUserTransactionsRequest(port, userId);
         assertEquals(200, response.getStatus());

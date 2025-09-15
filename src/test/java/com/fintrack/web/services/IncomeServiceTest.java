@@ -43,10 +43,10 @@ public class IncomeServiceTest {
         tables.createIncome();
     }
 
-    // @AfterEach
-    // public void discardTables() {
-    //     tables.deleteTables();
-    // }
+    @AfterEach
+    public void discardTables() {
+        tables.deleteTable("income");
+    }
 
     /**
      * Stop the app server once all tests are run
@@ -60,7 +60,6 @@ public class IncomeServiceTest {
     public void addIncomeTest() {
     	Income income = new Income(1, 10000.00, "salary");
     	TestUtilities.testAddIncome(server.getPort(), 1, income);
-    	assertTrue(tables.deleteTable("income"));
     }
 
     @Test
@@ -68,7 +67,6 @@ public class IncomeServiceTest {
         Income income = new Income(1, 10000.00, "salary");
         tables.insertInto(income);
         TestUtilities.testRemoveIncome(server.getPort(), 1);
-        assertTrue(tables.deleteTable("income"));
     }
 
     @Test
@@ -79,6 +77,5 @@ public class IncomeServiceTest {
         tables.insertInto(income2);
 
         TestUtilities.testGetUserIncome(server.getPort(), 1, List.of(income, income2));
-        assertTrue(tables.deleteTable("income"));
     }
 }

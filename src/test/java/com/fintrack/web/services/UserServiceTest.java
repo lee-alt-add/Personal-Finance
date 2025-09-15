@@ -111,4 +111,18 @@ public class UserServiceTest {
 
         TestUtilities.testGetUserTransations(server.getPort(), 1);
     }
+
+    @Test
+    public void getUserBalanceTest() {
+        User user = new User(1, "John", "john@doe.com");
+        Income income = new Income(1, 10000.00, "salary");
+        Expense expense = new Expense(1, 1000.00, "Food", "Lunch");
+
+        // Add to tables
+        tables.insertInto(income);
+        tables.insertInto(expense);
+        tables.insertInto(user);
+
+        TestUtilities.testGetUserBalance(server.getPort(), 1, 9000.00);
+    }
 }

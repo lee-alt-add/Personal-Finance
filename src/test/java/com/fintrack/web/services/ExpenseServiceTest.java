@@ -42,10 +42,10 @@ public class ExpenseServiceTest {
         tables.createExpenses();
     }
 
-    // @AfterEach
-    // public void discardTables() {
-    //     tables.deleteTables();
-    // }
+    @AfterEach
+    public void discardTables() {
+        tables.deleteTable("expenses");
+    }
 
     /**
      * Stop the app server once all tests are run
@@ -59,7 +59,6 @@ public class ExpenseServiceTest {
     public void addExpenseTest() {
         Expense expense = new Expense(1, 70.00, "Food", "Lunch");
         TestUtilities.testAddExpense(server.getPort(), 1, expense);
-        assertTrue(tables.deleteTable("expenses"));
     }
 
     @Test
@@ -67,7 +66,6 @@ public class ExpenseServiceTest {
         Expense expense = new Expense(1, 375.00, "Transport", "To work");
         tables.insertInto(expense);
         TestUtilities.testRemoveExpense(server.getPort(), 1);
-        assertTrue(tables.deleteTable("expenses"));
     }
 
     @Test
@@ -78,6 +76,5 @@ public class ExpenseServiceTest {
         tables.insertInto(expense2);
 
         TestUtilities.testGetUserExpenses(server.getPort(), 1, List.of(expense, expense2));
-        assertTrue(tables.deleteTable("expenses"));
     }
 }

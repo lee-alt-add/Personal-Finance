@@ -70,4 +70,23 @@ public class UserService {
 			context.status(404).result(e.getMessage());
 		}
 	}
+
+	public void getUserBalance(Context context) {
+		try {
+			int id = Integer.parseInt(context.pathParam("id"));
+			double income = incomeDao.findIncomeByUserId(id)
+										.stream()
+										.mapToDouble(e -> e.getAmount())
+										.sum();
+
+			double expenses = expenseDao.findAllExpensesByUserId(id)
+										.stream()
+										.mapToDouble(e -> e.getAmount())
+										.sum();
+			Balance balance = new Balance(income - expenses);
+			context.status(200).json(balance);
+		} catch (Exception e) {
+			context.status(404).result(e.getMessage());
+		}
+	}
 }

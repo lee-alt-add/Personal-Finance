@@ -58,6 +58,8 @@ public class WebServer {
         // Transactions
         /* ------------ */
         this.javalin.get("/users/{id}/transactions", ctx -> userService.getUserTransactions(ctx));
+
+        this.javalin.get("/users/{id}/balance", ctx -> userService.getUserBalance(ctx));
 	}
 
 	public void setDatabaseManager(String databaseUrl) {
