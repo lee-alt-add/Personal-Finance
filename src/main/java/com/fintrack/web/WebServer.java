@@ -7,6 +7,7 @@ import java.sql.Connection;
 import com.fintrack.repository.*;
 import com.fintrack.db.DatabaseManager;
 import com.fintrack.web.services.*;
+import io.javalin.http.staticfiles.Location;
 
 public class WebServer {
 	private Javalin javalin;
@@ -22,6 +23,7 @@ public class WebServer {
 
 		this.javalin = Javalin.create(config -> {
 			config.defaultContentType = "application/json";
+			config.addStaticFiles("/public", Location.CLASSPATH);
 		});
 
 
