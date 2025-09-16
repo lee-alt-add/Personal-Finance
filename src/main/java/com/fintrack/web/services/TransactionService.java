@@ -1,5 +1,6 @@
 package com.fintrack.web.services;
 
+import com.fintrack.entity.IncomeAndExpensesPerMonth;
 import com.fintrack.entity.Transactions;
 import com.fintrack.repository.TransactionsDao;
 import io.javalin.http.Context;
@@ -20,6 +21,16 @@ public class TransactionService {
             int userId = Integer.parseInt(context.pathParam("id"));
             List<Transactions> allTransactions = transactionsDao.getUserTransactionsById(userId);
             context.status(200).json(allTransactions);
+        } catch (Exception e) {
+            context.status(404);
+        }
+    }
+
+    public void getUserTrends(Context context) {
+        try {
+            int userId = Integer.parseInt(context.pathParam("id"));
+            List<IncomeAndExpensesPerMonth> trends = transactionsDao.getUserTrends(userId);
+            context.status(200).json(trends);
         } catch (Exception e) {
             context.status(404);
         }

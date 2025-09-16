@@ -2,6 +2,7 @@ package com.fintrack.repository;
 
 import com.fintrack.entity.Expense;
 import com.fintrack.entity.Income;
+import com.fintrack.entity.IncomeAndExpensesPerMonth;
 import com.fintrack.entity.Transactions;
 
 import java.sql.*;
@@ -57,5 +58,43 @@ public class TransactionsDao {
             e.printStackTrace();
             return Collections.emptyList();
         }
+    }
+
+    public List<IncomeAndExpensesPerMonth> getUserTrends(int userId) {
+        String sql = """
+            SELECT
+                strftime('%Y-%m', date) AS month,
+                SUM(CASE WHEN type = 'income' THEN amount ELSE 0 END) AS total_income,
+                SUM(CASE WHEN type = 'expense' THEN amount ELSE 0 END) AS total_expense
+            FROM (
+                SELECT amount, date, 'income' AS type FROM income WHERE user_id = ?
+                UNION ALL
+                SELECT amount, date, 'expense' AS type FROM expenses WHERE user_id = ?
+            ) AS combined
+            GROUP BY month
+            ORDER BY month ASC;
+        """;
+
+        List<IncomeAndExpensesPerMonth> trends = new ArrayList<>();
+
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setInt(1, userId);
+            stmt.setInt(2, userId);
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                Map<String, Object> row = new HashMap<>();
+                IncomeAndExpensesPerMonth iAndE = new IncomeAndExpensesPerMonth(
+                        rs.getString("month"),
+                        rs.getDouble("total_income"),
+                        rs.getDouble("total_expense")
+                );
+                trends.add(iAndE);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return trends;
     }
 }

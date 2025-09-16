@@ -99,11 +99,31 @@ public class TestUtilities {
         String url = "http://localhost:%d/users/%d/summary/categories".formatted(port, userId);
         return Unirest.get(url).asJson();
     }
+
+    public static HttpResponse<JsonNode> getTrendsRequest(int port, int userId) {
+        String url = "http://localhost:%d/users/%d/summary/trends".formatted(port, userId);
+        return Unirest.get(url).asJson();
+    }
     /*
     * ---------
     * Testers
     * ---------
     */
+    public static void testGetTrends(int port, int userId, List<IncomeAndExpensesPerMonth> trends) {
+        HttpResponse<JsonNode> response = getTrendsRequest(port, userId);
+        assertEquals(200, response.getStatus());
+        JSONArray jsonArray = response.getBody().getArray();
+
+        assertEquals(trends.size(), jsonArray.length());
+
+        JSONObject jsonObject = jsonArray.getJSONObject(0);
+        IncomeAndExpensesPerMonth trend = trends.get(0);
+
+        assertEquals(trend.getMonth(), jsonObject.get("month"));
+        assertEquals(trend.getIncome(), jsonObject.get("income"));
+        assertEquals(trend.getExpenses(), jsonObject.get("expenses"));
+    }
+
     public static void testGetCategoryExpenditure(int port, int userId, ExpenseCategory expenseCategory) {
         HttpResponse<JsonNode> response = getCategoryExpenditureRequest(port, userId);
         assertEquals(200, response.getStatus());

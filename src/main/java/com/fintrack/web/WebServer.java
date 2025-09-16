@@ -63,6 +63,8 @@ public class WebServer {
         /* ------------ */
         this.javalin.get("/users/{id}/transactions", ctx -> transactionService.getUserTransactions(ctx));
 
+		this.javalin.get("/users/{id}/summary/trends", ctx -> transactionService.getUserTrends(ctx));
+
 		/* -------- */
 		// Balance
 		/* -------- */

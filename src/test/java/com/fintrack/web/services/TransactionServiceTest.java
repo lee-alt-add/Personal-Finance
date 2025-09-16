@@ -17,6 +17,9 @@ import com.fintrack.repository.Tables;
 import com.fintrack.web.WebServer;
 import com.fintrack.entity.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class TransactionServiceTest {
     private static WebServer server;
     private static Tables tables;
@@ -67,5 +70,23 @@ public class TransactionServiceTest {
         tables.insertInto(user);
 
         TestUtilities.testGetUserTransactions(server.getPort(), 1);
+    }
+
+    @Test
+    public void getTrendsTest() {
+        User user = new User(1, "John", "john@doe.com");
+        Income income = new Income(1, 10000.00, "salary");
+        Expense expense = new Expense(1, 70.00, "Food", "Lunch");
+        Expense expense2 = new Expense(1, 300.00, "Food", "Lunch");
+        List<IncomeAndExpensesPerMonth> trends = new ArrayList<>();
+        trends.add(new IncomeAndExpensesPerMonth("2025-09", 10000.00, 370.00));
+
+        // Add to tables
+        tables.insertInto(expense);
+        tables.insertInto(expense2);
+        tables.insertInto(income);
+        tables.insertInto(user);
+
+        TestUtilities.testGetTrends(server.getPort(), 1, trends);
     }
 }
