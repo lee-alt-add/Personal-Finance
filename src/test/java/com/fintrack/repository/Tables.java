@@ -64,6 +64,32 @@ public class Tables {
         return false;
     }
 
+    public ResultSet getMonthly() {
+    	String sql = """
+    		SELECT
+			  (SELECT IFNULL(
+			  	SUM(amount), 0) FROM income WHERE user_id = ? 
+			  	AND MONTH(date) = MONTH(CURRENT_DATE) AND 
+			  	YEAR(date) = YEAR(CURRENT_DATE)) AS total_income,
+
+			  (SELECT IFNULL(SUM(amount), 0) FROM expenses WHERE user_id = ?
+			   AND MONTH(date) = MONTH(CURRENT_DATE) AND 
+			   YEAR(date) = YEAR(CURRENT_DATE)) AS total_expenses;
+    	""";
+
+    	return executeFinder(sql);
+    }
+
+    private ResultSet executeFinder(String sql) throws SQLException {
+    	try (PreparedStatement s = connection.prepareStatement(sql)) {
+    		return s.executeQuery();
+    	} catch (SQLException e) {
+    		e.printStackTrace();
+            return null;
+    	}
+        
+    }
+
     public boolean deleteTable(String tableName) {
 		String sql = "DROP TABLE %s;".formatted(tableName);
 		return executeSql(sql);
