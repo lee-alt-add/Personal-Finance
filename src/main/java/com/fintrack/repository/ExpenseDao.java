@@ -15,21 +15,27 @@ public class ExpenseDao {
 	}
 
 	public Expense addExpense(Expense expense) throws SQLException {
-	    String sql = "INSERT INTO expenses (user_id, amount, category, description) VALUES (?, ?, ?, ?);";
-	    try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-	        stmt.setInt(1, expense.getUserId());
-	        stmt.setDouble(2, expense.getAmount());
-	        stmt.setString(3, expense.getCategory());
-	        stmt.setString(4, expense.getDescription());
-	        stmt.executeUpdate();
-	        Expense expenseInDb = findAllExpenses().getLast();
+		String sql = "INSERT INTO expenses (user_id, amount, category, description) VALUES (?, ?, ?, ?);";
+		try (PreparedStatement stmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+			stmt.setInt(1, expense.getUserId());
+			stmt.setDouble(2, expense.getAmount());
+			stmt.setString(3, expense.getCategory());
+			stmt.setString(4, expense.getDescription());
+			stmt.executeUpdate();
 
-	        return expenseInDb;
-	    } catch (SQLException e) {
+			try (ResultSet rs = stmt.getGeneratedKeys()) {
+				if (rs.next()) {
+					int generatedId = rs.getInt(1);
+					return findById(generatedId);
+				}
+			}
+			return null;
+		} catch (SQLException e) {
 			e.printStackTrace();
 			return null;
 		}
 	}
+
 
 	public List<Expense> findAllExpenses() {
 		List<Expense> allExpenses = new ArrayList<>();
@@ -83,11 +89,14 @@ public class ExpenseDao {
 	}
 
 	public Expense removeExpenseById(int id) {
-		String sql = "DELETE FROM expenses WHERE expenses.id = ?;";
+		String sql = "DELETE FROM expenses WHERE id = ?;";
+		Expense expense = findById(id);
+		if (expense == null) {
+			return null;
+		}
 
 		try (PreparedStatement stmt = connection.prepareStatement(sql)) {
 			stmt.setInt(1, id);
-			Expense expense = findAllExpenses().stream().filter(e -> e.getId() == id).toList().getFirst();
 			stmt.executeUpdate();
 			return expense;
 		} catch (SQLException e) {
@@ -95,6 +104,7 @@ public class ExpenseDao {
 			return null;
 		}
 	}
+
 
 	public Expense findExpenseById(int id) {
 	    String sql = "SELECT * FROM expenses WHERE id = ?";
@@ -116,5 +126,28 @@ public class ExpenseDao {
 	    }
 	    return null;
 	}
+
+	public Expense findById(int id) {
+		String sql = "SELECT * FROM expenses WHERE id = ?;";
+		try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+			stmt.setInt(1, id);
+			ResultSet rs = stmt.executeQuery();
+			if (rs.next()) {
+				return new Expense(
+						rs.getInt("id"),
+						rs.getInt("user_id"),
+						rs.getDouble("amount"),
+						rs.getString("category"),
+						rs.getString("description"),
+						rs.getTimestamp("date")
+				);
+			}
+			return null;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
 
 }

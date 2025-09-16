@@ -64,23 +64,29 @@ public class Tables {
         return false;
     }
 
-    public ResultSet getMonthly() {
-    	String sql = """
-    		SELECT
-			  (SELECT IFNULL(
-			  	SUM(amount), 0) FROM income WHERE user_id = ? 
-			  	AND MONTH(date) = MONTH(CURRENT_DATE) AND 
-			  	YEAR(date) = YEAR(CURRENT_DATE)) AS total_income,
+//    public ResultSet getMonthly() {
+//    	String sql = """
+//    		SELECT
+//			  (SELECT IFNULL(
+//			  	SUM(amount), 0) FROM income WHERE user_id = ?
+//			  	AND MONTH(date) = MONTH(CURRENT_DATE) AND
+//			  	YEAR(date) = YEAR(CURRENT_DATE)) AS total_income,
+//
+//			  (SELECT IFNULL(SUM(amount), 0) FROM expenses WHERE user_id = ?
+//			   AND MONTH(date) = MONTH(CURRENT_DATE) AND
+//			   YEAR(date) = YEAR(CURRENT_DATE)) AS total_expenses;
+//    	""";
+//
+//		try (ResultSet s = executeFinder(sql)) {
+//			while (s.next()) {
+//
+//			}
+//		} catch (SQLException e) {
+//			throw new RuntimeException(e);
+//		}
+//    }
 
-			  (SELECT IFNULL(SUM(amount), 0) FROM expenses WHERE user_id = ?
-			   AND MONTH(date) = MONTH(CURRENT_DATE) AND 
-			   YEAR(date) = YEAR(CURRENT_DATE)) AS total_expenses;
-    	""";
-
-    	return executeFinder(sql);
-    }
-
-    private ResultSet executeFinder(String sql) throws SQLException {
+    private ResultSet executeFinder(String sql) {
     	try (PreparedStatement s = connection.prepareStatement(sql)) {
     		return s.executeQuery();
     	} catch (SQLException e) {

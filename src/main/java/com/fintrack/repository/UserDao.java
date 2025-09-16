@@ -16,17 +16,24 @@ public class UserDao {
 
 	public User save(User user) {
 		String sql = "INSERT INTO users (name, email) VALUES (?, ?);";
-		try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+		try (PreparedStatement stmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 			stmt.setString(1, user.getName());
 			stmt.setString(2, user.getEmail());
 			stmt.executeUpdate();
-			User userInDb = findAll().getLast();
-			return userInDb;
+
+			try (ResultSet rs = stmt.getGeneratedKeys()) {
+				if (rs.next()) {
+					int generatedId = rs.getInt(1);
+					return getUserById(generatedId);
+				}
+			}
+			return null; // no key returned
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return null;
 		}
 	}
+
 
 	public List<User> findAll() {
 		List<User> allUsers = new ArrayList<>();
@@ -51,18 +58,24 @@ public class UserDao {
 	}
 
 	public User removeUserById(int id) {
-		String sql = "DELETE FROM users WHERE users.id = ?;";
+		String sql = "DELETE FROM users WHERE id = ?;";
+		try {
+			User user = getUserById(id); // ✅ get the user before deleting
+			if (user == null) {
+				return null; // nothing to delete
+			}
 
-		try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-			stmt.setInt(1, id);
-			User user = findAll().stream().filter(e -> e.getId() == id).toList().getFirst();
-			stmt.executeUpdate();
+			try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+				stmt.setInt(1, id);
+				stmt.executeUpdate();
+			}
 			return user;
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return null;
 		}
 	}
+
 
 	public User getUserById(int id) {
 		String sql = "SELECT * FROM users WHERE users.id = ?;";

@@ -103,8 +103,7 @@ public class TestUtilities {
         assertEquals(expectedBalance, jsonObject.getDouble("amount"));
     }
 
-
-    public static void testGetUserTransations(int port, int userId) {
+    public static void testGetUserTransactions(int port, int userId) {
         HttpResponse<JsonNode> response = getUserTransactionsRequest(port, userId);
         assertEquals(200, response.getStatus());
         JSONArray jsonArray = response.getBody().getArray();
@@ -126,7 +125,6 @@ public class TestUtilities {
         HttpResponse<JsonNode> removalResponse = removeIncomeRequest(port, incomeId);
         assertEquals(200, removalResponse.getStatus());
     }
-
 
     public static void testRemoveExpense(int port, int expenseId) {
         HttpResponse<JsonNode> removalResponse = removeExpenseRequest(port, expenseId);

@@ -6,7 +6,7 @@ import java.sql.Connection;
 
 import com.fintrack.repository.*;
 import com.fintrack.db.DatabaseManager;
-import com.fintrack.web.service.*;
+import com.fintrack.web.services.*;
 
 public class WebServer {
 	private Javalin javalin;
@@ -14,6 +14,7 @@ public class WebServer {
 	private UserService userService;
 	private ExpenseService expenseService;
 	private IncomeService incomeService;
+	private TransactionService transactionService;
 
 
 	public WebServer() {
@@ -23,7 +24,7 @@ public class WebServer {
 		});
 
 
-		this.javalin.get("/health", ctx -> APIHandler.getHealth(ctx));
+		this.javalin.get("/health", APIHandler::getHealth);
 
 		/* ------- */
         // User
@@ -57,7 +58,7 @@ public class WebServer {
         /* ------------ */
         // Transactions
         /* ------------ */
-        this.javalin.get("/users/{id}/transactions", ctx -> userService.getUserTransactions(ctx));
+        this.javalin.get("/users/{id}/transactions", ctx -> transactionService.getUserTransactions(ctx));
 
         this.javalin.get("/users/{id}/balance", ctx -> userService.getUserBalance(ctx));
 	}
@@ -70,6 +71,7 @@ public class WebServer {
 		expenseService = new ExpenseService(manager.getConnection());
 		userService = new UserService(manager.getConnection());
 		incomeService = new IncomeService(manager.getConnection());
+		transactionService = new TransactionService(manager.getConnection());
 	}
 
 	public Connection getDBConnection() {

@@ -1,11 +1,8 @@
 package com.fintrack.web.services;
 
 import kong.unirest.HttpResponse;
-import kong.unirest.HttpStatus;
 import kong.unirest.JsonNode;
-import kong.unirest.Unirest;
 import kong.unirest.json.JSONArray;
-import kong.unirest.json.JSONObject;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -96,20 +93,6 @@ public class UserServiceTest {
         JSONArray jsonArray = response.getBody().getArray();
         assertEquals(2, jsonArray.length());
         assertTrue(jsonArray.get(0).toString().contains("John"));
-    }
-
-    @Test
-    public void getUserTransactionsTest() {
-        User user = new User(1, "John", "john@doe.com");
-        Income income = new Income(1, 10000.00, "salary");
-        Expense expense = new Expense(1, 70.00, "Food", "Lunch");
-
-        // Add to tables
-        tables.insertInto(income);
-        tables.insertInto(expense);
-        tables.insertInto(user);
-
-        TestUtilities.testGetUserTransations(server.getPort(), 1);
     }
 
     @Test

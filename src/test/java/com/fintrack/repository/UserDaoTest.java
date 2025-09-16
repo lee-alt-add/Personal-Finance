@@ -59,8 +59,8 @@ public class UserDaoTest {
 
         List<User> users = userDao.findAll();
         assertEquals(2, users.size());
-        assertTrue(users.getFirst().getName().equals("John"));
-        assertTrue(users.getLast().getName().equals("Jane"));
+        assertTrue(users.get(0).getName().equals("John"));
+        assertTrue(users.get(users.size() - 1).getName().equals("Jane"));
         assertNotNull(userDao.removeUserById(1));
         assertNotNull(userDao.removeUserById(2));
         assertTrue(userDao.findAll().isEmpty());

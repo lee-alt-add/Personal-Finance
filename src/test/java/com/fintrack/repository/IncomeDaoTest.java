@@ -62,8 +62,8 @@ public class IncomeDaoTest {
 
         List<Income> incomeFound = incomeDao.findAllIncome();
         assertEquals(2, incomeFound.size());
-        assertEquals("salary", incomeFound.getFirst().getSource());
-        assertEquals("gift", incomeFound.getLast().getSource());
+        assertEquals("salary", incomeFound.get(0).getSource());
+        assertEquals("gift", incomeFound.get(incomeFound.size()-1).getSource());
         assertNotNull(incomeDao.removeIncomeById(1));
         assertNotNull(incomeDao.removeIncomeById(2));
     }

@@ -16,20 +16,26 @@ public class IncomeDao {
 
 
 	public Income addIncome(Income income) throws SQLException {
-	    String sql = "INSERT INTO income (user_id, amount, source) VALUES (?, ?, ?);";
-	    try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-	        stmt.setInt(1, income.getUserId());
-	        stmt.setDouble(2, income.getAmount());
-	        stmt.setString(3, income.getSource());
-	        stmt.executeUpdate();
-	        Income incomeInDb = findAllIncome().getLast();
+		String sql = "INSERT INTO income (user_id, amount, source) VALUES (?, ?, ?);";
+		try (PreparedStatement stmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+			stmt.setInt(1, income.getUserId());
+			stmt.setDouble(2, income.getAmount());
+			stmt.setString(3, income.getSource());
+			stmt.executeUpdate();
 
-	        return incomeInDb;
-	    } catch (SQLException e) {
+			try (ResultSet rs = stmt.getGeneratedKeys()) {
+				if (rs.next()) {
+					int generatedId = rs.getInt(1);
+					return findById(generatedId);
+				}
+			}
+			return null;
+		} catch (SQLException e) {
 			e.printStackTrace();
 			return null;
 		}
 	}
+
 
 	public List<Income> findAllIncome() {
 		List<Income> allIncome = new ArrayList<>();
@@ -81,16 +87,44 @@ public class IncomeDao {
 	}
 
 	public Income removeIncomeById(int id) {
-		String sql = "DELETE FROM income WHERE income.id = ?;";
+		String sql = "DELETE FROM income WHERE id = ?;";
+		try {
+			Income income = findById(id);
+			if (income == null) {
+				return null;
+			}
 
-		try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-			stmt.setInt(1, id);
-			Income income = findAllIncome().stream().filter(e -> e.getId() == id).toList().getFirst();
-			stmt.executeUpdate();
+			try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+				stmt.setInt(1, id);
+				stmt.executeUpdate();
+			}
 			return income;
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return null;
 		}
 	}
+
+
+	public Income findById(int id) {
+		String sql = "SELECT * FROM income WHERE id = ?;";
+		try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+			stmt.setInt(1, id);
+			ResultSet rs = stmt.executeQuery();
+			if (rs.next()) {
+				return new Income(
+						rs.getInt("id"),
+						rs.getInt("user_id"),
+						rs.getDouble("amount"),
+						rs.getString("source"),
+						rs.getTimestamp("date")
+				);
+			}
+			return null;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
 }

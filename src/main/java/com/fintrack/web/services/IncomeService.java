@@ -1,4 +1,4 @@
-package com.fintrack.web.service;
+package com.fintrack.web.services;
 
 import io.javalin.http.Context;
 import java.util.*;
