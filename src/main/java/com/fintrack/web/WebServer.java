@@ -47,6 +47,8 @@ public class WebServer {
 
         this.javalin.get("users/{id}/expenses", ctx -> expenseService.getUserExpenses(ctx));
 
+		this.javalin.get("/users/{id}/summary/categories", ctx -> expenseService.getCategoryExpenditure(ctx));
+
         /* ------- */
         // Income
         /* ------- */

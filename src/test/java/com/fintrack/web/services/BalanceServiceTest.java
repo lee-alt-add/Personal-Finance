@@ -1,8 +1,5 @@
 package com.fintrack.web.services;
 
-import kong.unirest.HttpResponse;
-import kong.unirest.JsonNode;
-import kong.unirest.json.JSONArray;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -80,6 +77,6 @@ public class BalanceServiceTest {
         tables.insertInto(income);
         tables.insertInto(expense);
 
-        TestUtilities.getUserMonthlySummary(server.getPort(), 1);
+        TestUtilities.testGetUserMonthlySummary(server.getPort(), 1, monthlySummary);
     }
 }

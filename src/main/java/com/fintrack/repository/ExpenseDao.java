@@ -5,6 +5,7 @@ import java.sql.*;
 import java.util.*;
 import java.time.LocalDateTime;
 import com.fintrack.entity.Expense;
+import com.fintrack.entity.ExpenseCategory;
 
 
 public class ExpenseDao {
@@ -26,7 +27,7 @@ public class ExpenseDao {
 			try (ResultSet rs = stmt.getGeneratedKeys()) {
 				if (rs.next()) {
 					int generatedId = rs.getInt(1);
-					return findById(generatedId);
+					return findExpenseById(generatedId);
 				}
 			}
 			return null;
@@ -90,7 +91,7 @@ public class ExpenseDao {
 
 	public Expense removeExpenseById(int id) {
 		String sql = "DELETE FROM expenses WHERE id = ?;";
-		Expense expense = findById(id);
+		Expense expense = findExpenseById(id);
 		if (expense == null) {
 			return null;
 		}
@@ -127,26 +128,30 @@ public class ExpenseDao {
 	    return null;
 	}
 
-	public Expense findById(int id) {
-		String sql = "SELECT * FROM expenses WHERE id = ?;";
+	public ExpenseCategory getExpensesByCategory(int userId) {
+		String sql = """
+            SELECT category, IFNULL(SUM(amount), 0) AS total
+            FROM expenses
+            WHERE user_id = ?
+            GROUP BY category;
+        """;
+
+
 		try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-			stmt.setInt(1, id);
+			stmt.setInt(1, userId);
 			ResultSet rs = stmt.executeQuery();
-			if (rs.next()) {
-				return new Expense(
-						rs.getInt("id"),
-						rs.getInt("user_id"),
-						rs.getDouble("amount"),
-						rs.getString("category"),
-						rs.getString("description"),
-						rs.getTimestamp("date")
-				);
+
+			while (rs.next()) {
+				String category = rs.getString("category");
+				double total = rs.getDouble("total");
+
+				return new ExpenseCategory(category, total);
 			}
-			return null;
 		} catch (SQLException e) {
 			e.printStackTrace();
-			return null;
 		}
+
+		return new ExpenseCategory();
 	}
 
 

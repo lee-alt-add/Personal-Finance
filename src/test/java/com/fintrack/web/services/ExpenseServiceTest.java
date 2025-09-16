@@ -77,4 +77,18 @@ public class ExpenseServiceTest {
 
         TestUtilities.testGetUserExpenses(server.getPort(), 1, List.of(expense, expense2));
     }
+
+    @Test
+    public void getCategoryExpenditure() {
+        User user = new User(1, "John", "john@doe.com");
+        Expense expense = new Expense(1, 400.00, "Food", "Lunch");
+        Expense expense2 = new Expense(1, 300.00, "Food", "Lunch");
+        ExpenseCategory expenseCategory = new ExpenseCategory("Food", 700.00);
+
+        tables.insertInto(expense);
+        tables.insertInto(expense2);
+
+        TestUtilities.testGetCategoryExpenditure(server.getPort(), 1, expenseCategory);
+
+    }
 }

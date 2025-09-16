@@ -46,4 +46,14 @@ public class ExpenseService {
 			context.status(404);
 		}
 	}
+
+	public void getCategoryExpenditure(Context context) {
+		try {
+			int id = Integer.parseInt(context.pathParam("id"));
+			ExpenseCategory expenseCategory = expenseDao.getExpensesByCategory(id);
+			context.status(200).json(expenseCategory);
+		} catch (Exception e) {
+			context.status(404);
+		}
+	}
 }

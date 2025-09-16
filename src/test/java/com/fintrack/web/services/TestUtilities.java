@@ -90,19 +90,31 @@ public class TestUtilities {
         return Unirest.get(url).asJson();
     }
 
-    public static HttpResponse<JsonNode> getUserMonthlySummary(int port, int userId) {
+    public static HttpResponse<JsonNode> getUserMonthlySummaryRequest(int port, int userId) {
         String url = "http://localhost:%d/users/%d/summary/monthly".formatted(port, userId);
         return Unirest.get(url).asJson();
     }
 
-
+    public static HttpResponse<JsonNode> getCategoryExpenditureRequest(int port, int userId) {
+        String url = "http://localhost:%d/users/%d/summary/categories".formatted(port, userId);
+        return Unirest.get(url).asJson();
+    }
     /*
     * ---------
     * Testers
     * ---------
     */
+    public static void testGetCategoryExpenditure(int port, int userId, ExpenseCategory expenseCategory) {
+        HttpResponse<JsonNode> response = getCategoryExpenditureRequest(port, userId);
+        assertEquals(200, response.getStatus());
+        JSONObject jsonObject = response.getBody().getObject();
+
+        assertEquals(expenseCategory.getCategory(), jsonObject.get("category"));
+        assertEquals(expenseCategory.getAmount(), jsonObject.get("amount"));
+    }
+
     public static void testGetUserMonthlySummary(int port, int userId, MonthlySummary monthlySummary) {
-        HttpResponse<JsonNode> response = getUserMonthlySummary(port, userId);
+        HttpResponse<JsonNode> response = getUserMonthlySummaryRequest(port, userId);
         assertEquals(200,response.getStatus());
         JSONObject jsonObject = response.getBody().getObject();
 
