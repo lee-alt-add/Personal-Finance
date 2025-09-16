@@ -16,11 +16,11 @@ import com.fintrack.repository.Tables;
 import com.fintrack.web.WebServer;
 import com.fintrack.entity.*;
 
-public class UserServiceTest {
-	private static WebServer server;
+public class BalanceServiceTest {
+    private static WebServer server;
     private static Tables tables;
 
-	/**
+    /**
      * Start the app server before all tests run
      */
     @BeforeAll
@@ -29,7 +29,7 @@ public class UserServiceTest {
         server.setDatabaseManager("memory");
         server.start(0);
         tables = new Tables(server.getDBConnection());
-        
+
     }
 
     /**
@@ -37,7 +37,7 @@ public class UserServiceTest {
      */
     @AfterAll
     public static void stopServer() {
-    	server.stop();
+        server.stop();
     }
 
     @BeforeEach
@@ -55,43 +55,31 @@ public class UserServiceTest {
     }
 
     @Test
-    public void addUserTest() {
+    public void getUserBalanceTest() {
         User user = new User(1, "John", "john@doe.com");
-        HttpResponse<JsonNode> response = TestUtilities.testAddUser(server.getPort(), user);
-    }
+        Income income = new Income(1, 10000.00, "salary");
+        Expense expense = new Expense(1, 1000.00, "Food", "Lunch");
 
-    @Test
-    public void getUserTest() {
-        User user = new User(1, "John", "john@doe.com");
+        // Add to tables
+        tables.insertInto(income);
+        tables.insertInto(expense);
         tables.insertInto(user);
-        TestUtilities.testGetUser(server.getPort(), 1, user);
+
+        TestUtilities.testGetUserBalance(server.getPort(), 1, 9000.00);
     }
 
     @Test
-    public void findAllUsersEmptyTest() {
-        // Requesting all users added
-        HttpResponse<JsonNode> response = TestUtilities.findAllUsersRequest(server.getPort());
-
-        assertEquals(200, response.getStatus());
-        JSONArray jsonArray = response.getBody().getArray();
-        assertEquals(0, jsonArray.length());
-    }
-
-    @Test
-    public void findAllUsersTest() {
+    public void getUserMonthlySummaryTest() {
         User user = new User(1, "John", "john@doe.com");
-        User user2 = new User(1, "Jane", "jane@doe.com");
-        
-        // Adding user
-        tables.insertInto(user);
-        tables.insertInto(user2);
+        Income income = new Income(1, 500.00, "salary");
+        Expense expense = new Expense(1, 300.00, "Food", "Lunch");
+        MonthlySummary monthlySummary = new MonthlySummary(500.00, 300.00, 200.00);
 
-        // Requesting all users added
-        HttpResponse<JsonNode> response = TestUtilities.findAllUsersRequest(server.getPort());
-        
-        assertEquals(200, response.getStatus());
-        JSONArray jsonArray = response.getBody().getArray();
-        assertEquals(2, jsonArray.length());
-        assertTrue(jsonArray.get(0).toString().contains("John"));
+        // Add to tables
+        tables.insertInto(user);
+        tables.insertInto(income);
+        tables.insertInto(expense);
+
+        TestUtilities.getUserMonthlySummary(server.getPort(), 1);
     }
 }

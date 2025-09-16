@@ -15,6 +15,7 @@ public class WebServer {
 	private ExpenseService expenseService;
 	private IncomeService incomeService;
 	private TransactionService transactionService;
+	private BalanceService balanceService;
 
 
 	public WebServer() {
@@ -60,7 +61,12 @@ public class WebServer {
         /* ------------ */
         this.javalin.get("/users/{id}/transactions", ctx -> transactionService.getUserTransactions(ctx));
 
-        this.javalin.get("/users/{id}/balance", ctx -> userService.getUserBalance(ctx));
+		/* -------- */
+		// Balance
+		/* -------- */
+        this.javalin.get("/users/{id}/balance", ctx -> balanceService.getUserBalance(ctx));
+
+		this.javalin.get("/users/{id}/summary/monthly", ctx -> balanceService.getMonthlySummary(ctx));
 	}
 
 	public void setDatabaseManager(String databaseUrl) {
@@ -72,6 +78,8 @@ public class WebServer {
 		userService = new UserService(manager.getConnection());
 		incomeService = new IncomeService(manager.getConnection());
 		transactionService = new TransactionService(manager.getConnection());
+		balanceService = new BalanceService(manager.getConnection());
+
 	}
 
 	public Connection getDBConnection() {

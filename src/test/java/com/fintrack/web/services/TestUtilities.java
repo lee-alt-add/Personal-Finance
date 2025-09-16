@@ -90,12 +90,27 @@ public class TestUtilities {
         return Unirest.get(url).asJson();
     }
 
+    public static HttpResponse<JsonNode> getUserMonthlySummary(int port, int userId) {
+        String url = "http://localhost:%d/users/%d/summary/monthly".formatted(port, userId);
+        return Unirest.get(url).asJson();
+    }
+
 
     /*
     * ---------
     * Testers
     * ---------
     */
+    public static void testGetUserMonthlySummary(int port, int userId, MonthlySummary monthlySummary) {
+        HttpResponse<JsonNode> response = getUserMonthlySummary(port, userId);
+        assertEquals(200,response.getStatus());
+        JSONObject jsonObject = response.getBody().getObject();
+
+        assertEquals(monthlySummary.getIncome(), jsonObject.get("income"));
+        assertEquals(monthlySummary.getExpenses(), jsonObject.get("expenses"));
+        assertEquals(monthlySummary.getBalance(), jsonObject.get("balance"));
+    }
+
     public static void testGetUserBalance(int port, int userId, double expectedBalance) {
         HttpResponse<JsonNode> response = getUserBalanceRequest(port, userId);
         assertEquals(200, response.getStatus());
