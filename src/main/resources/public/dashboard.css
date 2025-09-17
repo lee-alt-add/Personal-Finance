@@ -1,0 +1,218 @@
+:root {
+    --bg-color: #121212;
+    --card-color: #1E1E1E;
+    --primary-text: #E0E0E0;
+    --secondary-text: #A0A0A0;
+    --border-color: #2F2F2F;
+    --accent-green: #26A69A;
+    --accent-red: #EF5350;
+    --accent-blue: #42A5F5;
+    --font-family: 'Inter', sans-serif;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: var(--font-family);
+    background-color: var(--bg-color);
+    color: var(--primary-text);
+    padding: 2rem;
+}
+
+
+/* --- Dashboard Layout --- */
+.dashboard-container {
+    max-width: 1400px;
+    margin: auto;
+}
+
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: auto;
+    gap: 20px;
+    grid-template-areas:
+        "balance expenses income portfolio"
+        "trends trends investments investments"
+        "spending spending transactions transactions";
+}
+
+/* --- Card Styles --- */
+.card {
+    background-color: var(--card-color);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+}
+
+
+.card-title {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--secondary-text);
+    margin-bottom: 12px;
+}
+.card-subtitle {
+    font-size: 0.8rem;
+    color: var(--secondary-text);
+    margin-top: 8px;
+}
+
+/* --- Specific Card Layouts --- */
+.card-balance { grid-area: balance; align-items: flex-start; }
+.card-expenses { grid-area: expenses; }
+.card-income { grid-area: income; }
+.card-trends { grid-area: trends; }
+.card-investments { grid-area: investments; }
+.card-spending { grid-area: spending; }
+.card-portfolio { grid-area: portfolio; }
+.card-transactions { grid-area: transactions; }
+
+
+/* --- Card Content --- */
+.balance-amount {
+    font-size: 2.5rem;
+    font-weight: 600;
+    color: var(--primary-text);
+}
+
+.card-value {
+    font-size: 2rem;
+    font-weight: 600;
+}
+
+/* Circular Progress Bar */
+.progress-circle {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    background: radial-gradient(closest-side, var(--card-color) 79%, transparent 80% 100%),
+    conic-gradient(var(--accent-green) calc(var(--percent) * 1%), var(--border-color) 0);
+    margin-top: 1rem;
+}
+.progress-circle span {
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+
+
+/* Portfolio List */
+.card-portfolio ul {
+    list-style-type: none;
+    margin-top: 10px;
+}
+.card-portfolio li {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+    font-size: 0.9rem;
+}
+.card-portfolio li span {
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background-color: #333;
+    margin-right: 12px;
+    text-align: center;
+    line-height: 24px;
+    font-weight: bold;
+}
+.card-portfolio li strong {
+    margin-left: auto;
+    font-weight: 500;
+}
+
+
+/* Transactions List */
+.transaction-list {
+    list-style: none;
+    flex-grow: 1;
+}
+.transaction-list li {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+}
+.transaction-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: var(--border-color);
+    margin-right: 15px;
+}
+.transaction-details p {
+    font-weight: 500;
+}
+.transaction-details span {
+    font-size: 0.8rem;
+    color: var(--secondary-text);
+}
+.transaction-amount {
+    margin-left: auto;
+    font-size: 1rem;
+    font-weight: 600;
+}
+.btn-statement {
+    text-align: center;
+    padding: 12px;
+    background-color: var(--accent-green);
+    border-radius: 10px;
+    text-decoration: none;
+    color: white;
+    font-weight: 500;
+    transition: background-color 0.3s;
+}
+.btn-statement:hover {
+    background-color: #1e8075;
+}
+
+/* Chart containers */
+.category-chart-container {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+#spendingChart {
+    max-width: 150px;
+    max-height: 150px;
+}
+
+/* --- Responsive Design --- */
+@media (max-width: 1200px) {
+    .dashboard-grid {
+        grid-template-columns: repeat(2, 1fr);
+        grid-template-areas:
+            "balance portfolio"
+            "expenses income"
+            "trends trends"
+            "investments investments"
+            "spending spending"
+            "transactions transactions";
+    }
+}
+
+@media (max-width: 768px) {
+    body { padding: 1rem; }
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+        grid-template-areas:
+            "balance"
+            "portfolio"
+            "expenses"
+            "income"
+            "trends"
+            "investments"
+            "spending"
+            "transactions";
+    }
+}
+
