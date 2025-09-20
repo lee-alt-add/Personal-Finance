@@ -128,7 +128,7 @@ public class ExpenseDao {
 	    return null;
 	}
 
-	public ExpenseCategory getExpensesByCategory(int userId) {
+	public Map<String, Double> getExpensesByCategory(int userId) {
 		String sql = """
             SELECT category, IFNULL(SUM(amount), 0) AS total
             FROM expenses
@@ -136,6 +136,7 @@ public class ExpenseDao {
             GROUP BY category;
         """;
 
+        Map<String, Double> allCategories = new HashMap<>();
 
 		try (PreparedStatement stmt = connection.prepareStatement(sql)) {
 			stmt.setInt(1, userId);
@@ -145,13 +146,14 @@ public class ExpenseDao {
 				String category = rs.getString("category");
 				double total = rs.getDouble("total");
 
-				return new ExpenseCategory(category, total);
+				allCategories.put(category, total);
 			}
+			return allCategories;
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 
-		return new ExpenseCategory();
+		return allCategories;
 	}
 
 
