@@ -1,6 +1,10 @@
 // A simple state management object for user ID and data
+const urlParams = new URLSearchParams(window.location.search);
+const id = parseInt(urlParams.get('id'), 10);
+
+
 const appState = {
-    userId: 1, // Hardcoded user ID for this example
+    userId: id, // Hardcoded user ID for this example
     transactions: [],
     expenses: [],
     income: [],
@@ -72,6 +76,7 @@ const formatCurrency = (amount) => {
 // Function to fetch data from the API
 const fetchData = async () => {
     try {
+        
         const [
             transactionsRes,
             balanceRes,
@@ -112,9 +117,9 @@ const updateUI = () => {
 
 // Update Dashboard View
 const updateDashboard = () => {
-    currentBalanceEl.textContent = formatCurrency(appState.balance.total_balance);
-    currentBalanceEl.style.color = appState.balance.total_balance >= 0 ? 'var(--accent-green)' : 'var(--accent-orange)';
-    renderTransactionsList(appState.transactions.slice(0, 5), transactionsListEl); // Show only last 5
+    currentBalanceEl.textContent = formatCurrency(appState.balance.amount);
+    currentBalanceEl.style.color = appState.balance.amount >= 0 ? 'var(--accent-green)' : 'var(--accent-orange)';
+    renderTransactionsList(appState.transactions.slice(0, 5), transactionsListEl); 
     renderTrendsChart();
 };
 
@@ -139,12 +144,14 @@ const renderTransactionsList = (transactions, listElement) => {
     transactions.forEach(t => {
         const li = document.createElement('li');
         li.className = 'transaction-item';
-        const isExpense = t.type === 'expense';
+        const isExpense = t.description != null;
         const amountClass = isExpense ? 'amount-expense' : 'amount-income';
         const sign = isExpense ? '-' : '+';
+        const descriptor = isExpense ? t.description : t.source;
+
         li.innerHTML = `
             <div class="transaction-details">
-                <div class="transaction-description">${t.description}</div>
+                <div class="transaction-description">${descriptor}</div>
                 <div class="transaction-date">${new Date(t.date).toLocaleDateString()}</div>
             </div>
             <div class="transaction-amount ${amountClass}">${sign}${formatCurrency(t.amount)}</div>
@@ -301,10 +308,17 @@ transactionForm.addEventListener('submit', async (e) => {
     const description = document.getElementById('description').value;
     const category = type === 'expense' ? document.getElementById('category').value : null;
 
-    const payload = {
+    const payload = category === null ? 
+    {
+        amount,
+        source: description,
+        date: new Date().toISOString().split('T')[0],
+        ...(type === 'expense' && { category })
+    } : 
+    {
         amount,
         description,
-        date: new Date().toISOString().split('T')[0], // Use current date
+        date: new Date().toISOString().split('T')[0],
         ...(type === 'expense' && { category })
     };
 
