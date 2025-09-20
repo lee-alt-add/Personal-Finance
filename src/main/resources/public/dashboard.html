@@ -3,101 +3,126 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - FinFlow</title>
-    <link rel="stylesheet" href="dashboard.css">
+    <title>FinTrack Dashboard</title>
+    <link rel="stylesheet" href="css/dashboard.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-<div class="dashboard-container">
-    <main class="dashboard-grid">
-        <div class="card card-balance">
-            <span class="card-title">Overall Balance</span>
-            <p class="balance-amount">$23,565.50</p>
-            <div class="progress-circle" style="--percent: 9;">
-                <span>9%</span>
-            </div>
-            <span class="card-subtitle">Month Used</span>
+    <div class="dashboard-container">
+        <div class="menu-toggle" id="menu-toggle">
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
         </div>
 
-        <div class="card card-expenses">
-            <span class="card-title">Expenses</span>
-            <p class="card-value">$154%</p>
-            <span class="card-subtitle">of Budget</span>
-            <div class="mini-chart"></div>
-        </div>
+        <aside class="sidebar">
+            <div class="logo">FinTrack</div>
+            <nav>
+                <ul>
+                    <li class="active"><a href="#dashboard">Dashboard</a></li>
+                    <li><a href="#expenses">Expenses</a></li>
+                    <li><a href="#income">Income</a></li>
+                </ul>
+            </nav>
+        </aside>
 
-        <div class="card card-income">
-            <span class="card-title">Income</span>
-            <div class="mini-chart"></div>
-        </div>
-
-        <div class="card card-trends">
-            <span class="card-title">Trends</span>
-            <canvas id="trendsChart"></canvas>
-        </div>
-
-        <div class="card card-investments">
-            <span class="card-title">Investments</span>
-            <canvas id="investmentsChart"></canvas>
-        </div>
-
-        <div class="card card-spending">
-            <span class="card-title">Spending Categories</span>
-            <div class="category-chart-container">
-                <canvas id="spendingChart"></canvas>
-                <div class="stock-list">
-                    <div class="stock-item"><span></span>Apple</div>
-                    <div class="stock-item"><span></span>Google</div>
+        <main class="main-content">
+            <header class="header">
+                <h1>Welcome back, User!</h1>
+                <div class="user-profile" id="user-profile">
+                    <img src="user-image-placeholder.png" alt="User Profile" class="user-avatar" id="user-avatar">
+                    <div class="dropdown-menu" id="dropdown-menu">
+                        <a href="#" class="dropdown-item">Settings</a>
+                        <a href="signin.html" class="dropdown-item" id="sign-out-btn">Sign Out</a>
+                    </div>
                 </div>
-            </div>
-        </div>
+            </header>
 
-        <div class="card card-portfolio">
-            <span class="card-title">Portfolio Summary</span>
-            <ul>
-                <li><span>G</span> Housing <strong>$280k</strong></li>
-                <li><span>T</span> Transportation <strong>$9.90k</strong></li>
-                <li><span>TSLA</span> Tesla <strong>$6.26k</strong></li>
-                <li><span>AMZN</span> Amazon <strong>$2.43k</strong></li>
-                <li><span>E</span> Entertainment <strong>$1.76k</strong></li>
-            </ul>
-        </div>
+            <section id="dashboard-view" class="view active">
+                <div class="summary-cards">
+                    <div class="card balance-card">
+                        <div class="card-header">Current Balance</div>
+                        <div class="card-value" id="current-balance">$0.00</div>
+                    </div>
+                </div>
 
-        <div class="card card-transactions">
-            <span class="card-title">Recent Transactions</span>
-            <ul class="transaction-list">
-                <li>
-                    <div class="transaction-icon"></div>
-                    <div class="transaction-details">
-                        <p>MerMerchant</p>
-                        <span>June 1st</span>
-                    </div>
-                    <strong class="transaction-amount">$5,405</strong>
-                </li>
-                <li>
-                    <div class="transaction-icon"></div>
-                    <div class="transaction-details">
-                        <p>Margk Tront</p>
-                        <span>Amount</span>
-                    </div>
-                    <strong class="transaction-amount">$9,405</strong>
-                </li>
-                <li>
-                    <div class="transaction-icon"></div>
-                    <div class="transaction-details">
-                        <p>Gname Dnoas</p>
-                        <span>Category</span>
-                    </div>
-                    <strong class="transaction-amount">$2,705</strong>
-                </li>
-            </ul>
-            <a href="#" class="btn-statement">View Statement</a>
+                <div class="chart-container">
+                    <h2 class="section-title">Monthly Trends</h2>
+                    <canvas id="trends-chart"></canvas>
+                </div>
+
+                <div class="transactions-container">
+                    <h2 class="section-title">Recent Transactions</h2>
+                    <ul id="transactions-list">
+                        </ul>
+                </div>
+            </section>
+
+            <section id="expenses-view" class="view">
+                <div class="view-header">
+                    <h2 class="section-title">Expenses</h2>
+                    <button class="add-button" id="add-expense-btn">+ Add Expense</button>
+                </div>
+                <div class="chart-container">
+                    <h2 class="section-title">Spending by Category</h2>
+                    <canvas id="category-chart"></canvas>
+                </div>
+                <div class="transactions-list-container">
+                    <ul id="expenses-list">
+                        </ul>
+                </div>
+            </section>
+
+            <section id="income-view" class="view">
+                <div class="view-header">
+                    <h2 class="section-title">Income</h2>
+                    <button class="add-button" id="add-income-btn">+ Add Income</button>
+                </div>
+
+                <div class="transactions-list-container">
+                    <ul id="income-list">
+                        </ul>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <h2 id="modal-title"></h2>
+            <form id="transaction-form">
+                <input type="hidden" id="transaction-type">
+
+                <div class="form-group">
+                    <label for="amount">Amount</label>
+                    <input type="number" id="amount" step="0.01" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="description">Description</label>
+                    <input type="text" id="description" required>
+                </div>
+
+                <div class="form-group" id="category-group">
+                    <label for="category">Category</label>
+                    <select id="category">
+                        <option value="Food">Food</option>
+                        <option value="Transport">Transport</option>
+                        <option value="Bills">Bills</option>
+                        <option value="Shopping">Shopping</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+
+                <button type="submit">Save</button>
+            </form>
         </div>
-    </main>
-</div>
-<script src="charts.js"></script>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="scripts/dashboard.js"></script>
 </body>
 </html>
