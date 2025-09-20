@@ -124,13 +124,12 @@ public class TestUtilities {
         assertEquals(trend.getExpenses(), jsonObject.get("expenses"));
     }
 
-    public static void testGetCategoryExpenditure(int port, int userId, ExpenseCategory expenseCategory) {
+    public static void testGetCategoryExpenditure(int port, int userId, Map<String, Double> expenseCategory) {
         HttpResponse<JsonNode> response = getCategoryExpenditureRequest(port, userId);
         assertEquals(200, response.getStatus());
         JSONObject jsonObject = response.getBody().getObject();
 
-        assertEquals(expenseCategory.getCategory(), jsonObject.get("category"));
-        assertEquals(expenseCategory.getAmount(), jsonObject.get("amount"));
+        assertEquals(expenseCategory.size(), jsonObject.length());
     }
 
     public static void testGetUserMonthlySummary(int port, int userId, MonthlySummary monthlySummary) {

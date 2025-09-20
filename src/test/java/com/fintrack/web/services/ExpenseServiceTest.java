@@ -13,7 +13,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import java.time.LocalDateTime;
 import java.sql.Timestamp;
-import java.util.List;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -83,12 +83,12 @@ public class ExpenseServiceTest {
         User user = new User(1, "John", "john@doe.com");
         Expense expense = new Expense(1, 400.00, "Food", "Lunch");
         Expense expense2 = new Expense(1, 300.00, "Food", "Lunch");
-        ExpenseCategory expenseCategory = new ExpenseCategory("Food", 700.00);
+        Map<String, Double> categories = Map.of("Food", 700.00);
 
         tables.insertInto(expense);
         tables.insertInto(expense2);
 
-        TestUtilities.testGetCategoryExpenditure(server.getPort(), 1, expenseCategory);
+        TestUtilities.testGetCategoryExpenditure(server.getPort(), 1, categories);
 
     }
 }
