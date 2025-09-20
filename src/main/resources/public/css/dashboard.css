@@ -246,7 +246,7 @@ body.sidebar-open .menu-toggle .bar:nth-child(3) {
 /* Chart Container */
 .chart-container {
     background-color: var(--card-bg);
-    padding: 1.5rem;
+    padding: 1.5rem 1.5rem 1.5rem 5rem;
     border-radius: 8px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
     margin-bottom: 2rem;
@@ -258,6 +258,25 @@ body.sidebar-open .menu-toggle .bar:nth-child(3) {
     padding: 1.5rem;
     border-radius: 8px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.expenses-category-container {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+}
+
+.expenses-category-container .chart-container {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    flex-grow: 1;
+    max-height: 500px;
+}
+
+.expenses-category-container .transactions-list-container {
+    flex-grow: 2;
+    max-height: 500px;
 }
 
 #transactions-list, #expenses-list, #income-list {
