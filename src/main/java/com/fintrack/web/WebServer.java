@@ -34,7 +34,7 @@ public class WebServer {
         /* ------- */
         this.javalin.post("/users", ctx -> userService.saveUser(ctx));
 
-        this.javalin.get("/users/{id}", ctx -> userService.getUser(ctx));
+        this.javalin.post("/users/signin", ctx -> userService.getUser(ctx));
 
         this.javalin.delete("/users/{id}", ctx -> userService.removeUser(ctx));
 

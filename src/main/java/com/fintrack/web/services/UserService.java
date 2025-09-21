@@ -34,8 +34,8 @@ public class UserService {
 
 	public void getUser(Context context) {
 		try {
-			int id = Integer.parseInt(context.pathParam("id"));
-			User user = userDao.getUserById(id);
+			User userCredentials = context.bodyAsClass(User.class);
+			User user = userDao.getUser(userCredentials);
 			context.status(200).json(user);
 		} catch (Exception e) {
 			context.status(404);

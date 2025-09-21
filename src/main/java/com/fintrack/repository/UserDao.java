@@ -15,10 +15,11 @@ public class UserDao {
 	}
 
 	public User save(User user) {
-		String sql = "INSERT INTO users (name, email) VALUES (?, ?);";
+		String sql = "INSERT INTO users (name, email, password) VALUES (?, ?, ?);";
 		try (PreparedStatement stmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 			stmt.setString(1, user.getName());
 			stmt.setString(2, user.getEmail());
+			stmt.setString(3, user.getPassword());
 			stmt.executeUpdate();
 
 			try (ResultSet rs = stmt.getGeneratedKeys()) {
@@ -82,6 +83,31 @@ public class UserDao {
 
 		try (PreparedStatement stmt = connection.prepareStatement(sql)) {
 			stmt.setInt(1, id);
+			try (ResultSet s = stmt.executeQuery()) {
+				if (s.next()) {
+					return new User (
+						s.getInt("id"),
+						s.getString("name"),
+						s.getString("email")
+					);
+				} else {
+					return null;
+				}
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+
+	public User getUser(User user) {
+		String sql = "SELECT * FROM users u WHERE u.email = ? AND u.password = ?;";
+
+		try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+			stmt.setString(1, user.getEmail());
+			stmt.setString(2, user.getPassword());
+			
 			try (ResultSet s = stmt.executeQuery()) {
 				if (s.next()) {
 					return new User (
