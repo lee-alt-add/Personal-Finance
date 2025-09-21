@@ -337,7 +337,7 @@ transactionForm.addEventListener('submit', async (e) => {
             alert(`${type.charAt(0).toUpperCase() + type.slice(1)} added successfully!`);
             modal.style.display = 'none';
             transactionForm.reset();
-            fetchData(); // Refresh data after a successful save
+            fetchData();
         } else {
             const errorData = await response.json();
             alert(`Error adding ${type}: ${errorData.message}`);
@@ -383,9 +383,7 @@ signOutBtn.addEventListener('click', (e) => {
     window.location.href = '/signin.html'; // Or whatever your login page URL is
 });
 
-// Optional: Set a user avatar image (if available from your backend)
-// For this example, we'll just use a placeholder.
-// In a real app, you would fetch the user's image URL.
+
 // fetch(`${BASE_URL}/users/${appState.userId}`)
 //     .then(res => res.json())
 //     .then(user => {
