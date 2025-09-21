@@ -119,28 +119,29 @@ const updateUI = () => {
 const updateDashboard = () => {
     currentBalanceEl.textContent = formatCurrency(appState.balance.amount);
     currentBalanceEl.style.color = appState.balance.amount >= 0 ? 'var(--accent-green)' : 'var(--accent-orange)';
-    renderTransactionsList(appState.transactions.slice(0, 5), transactionsListEl); 
+    renderTransactionsList(appState.transactions.slice(0, 5), transactionsListEl, false); 
     renderTrendsChart();
 };
 
 // Update Expenses View
 const updateExpenses = () => {
-    renderTransactionsList(appState.expenses, expensesListEl);
+    renderTransactionsList(appState.expenses, expensesListEl, true);
     renderCategoryChart();
 };
 
 // Update Income View
 const updateIncome = () => {
-    renderTransactionsList(appState.income, incomeListEl);
+    renderTransactionsList(appState.income, incomeListEl, true);
 };
 
 // Render transaction list
-const renderTransactionsList = (transactions, listElement) => {
+const renderTransactionsList = (transactions, listElement, addDelete) => {
     listElement.innerHTML = ''; // Clear the list
     if (transactions.length === 0) {
         listElement.innerHTML = '<li class="transaction-item">No transactions found.</li>';
         return;
     }
+
     transactions.forEach(t => {
         const li = document.createElement('li');
         li.className = 'transaction-item';
@@ -149,15 +150,30 @@ const renderTransactionsList = (transactions, listElement) => {
         const sign = isExpense ? '-' : '+';
         const descriptor = isExpense ? t.description : t.source;
 
-        li.innerHTML = `
-            <div class="transaction-details">
-                <div class="transaction-description">${descriptor}</div>
-                <div class="transaction-date">${new Date(t.date).toLocaleDateString()}</div>
-            </div>
-            <div class="transaction-amount ${amountClass}">${sign}${formatCurrency(t.amount)}</div>
-        `;
+        if (addDelete) {
+            li.innerHTML = `
+                <div class="transaction-details">
+                    <div class="transaction-description">${descriptor}</div>
+                    <div class="transaction-date">
+                        <input type="checkbox" id="item-${t.id}" name="item-${t.id}">
+                        <label for="item-${t.id}">${new Date(t.date).toLocaleDateString()}</label>
+                    </div>
+                    </div>
+                <div class="transaction-amount ${amountClass}">${sign}${formatCurrency(t.amount)}</div>
+            `;
+        } 
+        else {
+            li.innerHTML = `
+                <div class="transaction-details">
+                    <div class="transaction-description">${descriptor}</div>
+                    <div class="transaction-date">${new Date(t.date).toLocaleDateString()}</div>
+                </div>
+                <div class="transaction-amount ${amountClass}">${sign}${formatCurrency(t.amount)}</div>
+            `;
+        }
+        
         listElement.appendChild(li);
-    });
+    });  
 };
 
 // Render Trends Chart
