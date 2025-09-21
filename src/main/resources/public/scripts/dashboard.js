@@ -380,7 +380,7 @@ signOutBtn.addEventListener('click', (e) => {
     alert('You have been signed out.');
     
     // Redirect to the login page or home page
-    window.location.href = '/signin'; // Or whatever your login page URL is
+    window.location.href = '/signin.html'; // Or whatever your login page URL is
 });
 
 // Optional: Set a user avatar image (if available from your backend)
