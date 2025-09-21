@@ -60,7 +60,7 @@ public class TransactionsDao {
         }
     }
 
-    public List<IncomeAndExpensesPerMonth> getUserTrends(int userId) {
+    public IncomeAndExpensesPerMonth getUserTrends(int userId) {
         String sql = """
             SELECT
                 strftime('%Y-%m', date) AS month,
@@ -74,8 +74,10 @@ public class TransactionsDao {
             GROUP BY month
             ORDER BY month ASC;
         """;
-
-        List<IncomeAndExpensesPerMonth> trends = new ArrayList<>();
+        
+        List<String> labels = new ArrayList<>();
+        List<Double> income = new ArrayList<>();
+        List<Double> expenses = new ArrayList<>();
 
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setInt(1, userId);
@@ -83,18 +85,16 @@ public class TransactionsDao {
             ResultSet rs = stmt.executeQuery();
 
             while (rs.next()) {
-                Map<String, Object> row = new HashMap<>();
-                IncomeAndExpensesPerMonth iAndE = new IncomeAndExpensesPerMonth(
-                        rs.getString("month"),
-                        rs.getDouble("total_income"),
-                        rs.getDouble("total_expense")
-                );
-                trends.add(iAndE);
+                labels.add(rs.getString("month"));
+                income.add(rs.getDouble("total_income"));
+                expenses.add(rs.getDouble("total_expense"));
             }
+
+            return new IncomeAndExpensesPerMonth(labels, income, expenses);
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
-        return trends;
+        return new IncomeAndExpensesPerMonth();
     }
 }

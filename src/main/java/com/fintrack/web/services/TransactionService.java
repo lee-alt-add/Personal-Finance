@@ -29,7 +29,7 @@ public class TransactionService {
     public void getUserTrends(Context context) {
         try {
             int userId = Integer.parseInt(context.pathParam("id"));
-            List<IncomeAndExpensesPerMonth> trends = transactionsDao.getUserTrends(userId);
+            IncomeAndExpensesPerMonth trends = transactionsDao.getUserTrends(userId);
             context.status(200).json(trends);
         } catch (Exception e) {
             context.status(404);

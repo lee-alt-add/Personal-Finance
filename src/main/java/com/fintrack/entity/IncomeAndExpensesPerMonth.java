@@ -1,39 +1,41 @@
 package com.fintrack.entity;
 
-public class IncomeAndExpensesPerMonth {
-    private String month;
-    private double income;
-    private double expenses;
+import java.util.*;
 
-    public IncomeAndExpensesPerMonth(String month, double income, double expenses) {
-        this.month = month;
+public class IncomeAndExpensesPerMonth {
+    private List<String> months;
+    private List<Double> income;
+    private List<Double> expenses;
+
+    public IncomeAndExpensesPerMonth(List<String> months, List<Double> income, List<Double> expenses) {
+        this.months = months;
         this.income = income;
         this.expenses = expenses;
     }
 
     public IncomeAndExpensesPerMonth() { }
 
-    public String getMonth() {
-        return month;
+    public List<String> getMonth() {
+        return months;
     }
 
-    public void setMonth(String month) {
-        this.month = month;
+    public void setMonth(List<String> months) {
+        this.months = months;
     }
 
-    public double getIncome() {
+    public List<Double> getIncome() {
         return income;
     }
 
-    public void setIncome(double income) {
+    public void setIncome(List<Double> income) {
         this.income = income;
     }
 
-    public double getExpenses() {
+    public List<Double> getExpenses() {
         return expenses;
     }
 
-    public void setExpenses(double expenses) {
+    public void setExpenses(List<Double> expenses) {
         this.expenses = expenses;
     }
 }

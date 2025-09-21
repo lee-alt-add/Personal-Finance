@@ -11,7 +11,7 @@ const appState = {
     balance: 0,
     categorySummary: {},
     trends: {
-        labels: [],
+        months: [],
         income: [],
         expenses: []
     }
@@ -168,7 +168,7 @@ const renderTrendsChart = () => {
     trendsChart = new Chart(ctx, {
         type: 'line',
         data: {
-            labels: appState.trends.labels,
+            labels: appState.trends.months,
             datasets: [{
                 label: 'Income',
                 data: appState.trends.income,
