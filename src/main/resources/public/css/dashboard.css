@@ -267,7 +267,7 @@ body.sidebar-open .main-content {
 #transactions-list, #expenses-list, #income-list {
     list-style: none;
 }
-#income-delete-button {
+#income-delete-button, #expense-delete-button {
     margin-top: auto;
     margin-left: auto;
     background-color: var(--accent-red);
