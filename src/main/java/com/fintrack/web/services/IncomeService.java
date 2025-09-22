@@ -39,8 +39,8 @@ public class IncomeService {
 
 	public void removeIncomeById(Context context) {
 		try {
-			int id = Integer.parseInt(context.pathParam("id"));
-			Income income = incomeDao.removeIncomeById(id);
+			Income body = context.bodyAsClass(Income.class);
+			Income income = incomeDao.removeIncomeById(body.getId());
 			context.status(200).json(income);
 		} catch (Exception e) {
 			context.status(404);

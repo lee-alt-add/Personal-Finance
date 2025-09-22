@@ -399,5 +399,15 @@ body.sidebar-open .main-content {
 #transaction-form button:hover {
     background-color: #0056b3;
 }
+#notification {
+    display: none;
+    background-color: var(--card-bg);
+    padding: 1rem;
+    border-radius: 10px;
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+}
 
 /* ------------------------------------------------------------ */

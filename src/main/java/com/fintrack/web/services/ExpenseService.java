@@ -39,11 +39,11 @@ public class ExpenseService {
 
 	public void removeExpenseById(Context context) {
 		try {
-			int id = Integer.parseInt(context.pathParam("id"));
-			Expense expense = expenseDao.removeExpenseById(id);
+			Expense body = context.bodyAsClass(Expense.class);
+			Expense expense = expenseDao.removeExpenseById(body.getId());
 			context.status(200).json(expense);
 		} catch (Exception e) {
-			context.status(404);
+			context.json(Map.of("error", e.getMessage())).status(404);
 		}
 	}
 

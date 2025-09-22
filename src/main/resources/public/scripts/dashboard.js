@@ -40,7 +40,9 @@ const transactionsListEl = document.getElementById('transactions-list');
 const expensesListEl = document.getElementById('expenses-list');
 const incomeListEl = document.getElementById('income-list');
 const addExpenseBtn = document.getElementById('add-expense-btn');
+const deleteExpenseBtn = document.getElementById("expense-delete-button");
 const addIncomeBtn = document.getElementById('add-income-btn');
+const incomeDeleteBtn = document.getElementById("income-delete-button");
 const modal = document.getElementById('modal');
 const modalTitle = document.getElementById('modal-title');
 const closeBtn = document.querySelector('.close-btn');
@@ -48,6 +50,121 @@ const transactionForm = document.getElementById('transaction-form');
 const transactionTypeInput = document.getElementById('transaction-type');
 const categoryGroup = document.getElementById('category-group');
 
+// deleteExpenseBtn.addEventListener("click", () => {
+//     const selectedItems = expensesListEl.querySelectorAll('input[type="checkbox"]:checked');
+
+//     for (const checkbox of selectedItems) {
+//         const response = deleteItem("expense", checkbox);
+//         if (!response) {
+//             return;
+//         }
+//     }
+// });
+
+// const deleteItem = async (from, item) => {
+//     if (from === "expense") {
+//         try {
+//             const response = await fetch(`users/${item.id}/expenses`);
+//             return response.ok;
+//         } catch (error) {
+//             console.error("Error deleting expenses:", error);
+//             // Display a user-friendly error message
+//             alert("Failed to delete expense");
+//             return false;
+//         }
+//     } else {
+//         console.error("Could not send delete data.")
+//     }
+// };
+
+deleteExpenseBtn.addEventListener("click", () => {
+    const selectedItems = expensesListEl.querySelectorAll('input[type="checkbox"]:checked');
+    
+    // Check if there are items selected before proceeding
+    if (selectedItems.length === 0) {
+        alert("Please select at least one item to delete.");
+        return;
+    }
+    
+    // Deleting all selected items
+    (async () => {
+        for (const checkbox of selectedItems) {
+            const response = await deleteItem("expense", checkbox.id);
+            if (!response) {
+                return;
+            }
+            fetchData();
+        }
+    })();
+    showNotification("All selected expenses have been deleted!");
+});
+
+incomeDeleteBtn.addEventListener("click", () => {
+    const selectedItems = incomeListEl.querySelectorAll('input[type="checkbox"]:checked');
+    
+    // Check if there are items selected before proceeding
+    if (selectedItems.length === 0) {
+        alert("Please select at least one item to delete.");
+        return;
+    }
+    
+    // Deleting all selected items
+    (async () => {
+        for (const checkbox of selectedItems) {
+            const response = await deleteItem("income", checkbox.id);
+            if (!response) {
+                return;
+            }
+            fetchData();
+        }
+    })();
+    showNotification("All selected expenses have been deleted!");
+});
+
+const deleteItem = async (from, itemId) => {
+    const apiLink = from === "expense" ?
+        `users/${appState.userId}/expenses` :
+        `users/${appState.userId}/income`
+        ;
+
+    try {
+        const response = await fetch(apiLink, {
+            method: "DELETE",
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                id: itemId
+            })
+        });
+        
+        if (response.ok) {
+            console.log("Expense deleted successfully.");
+            return true;
+        } else {
+            console.error("Failed to delete expense. Server responded with:", response.status);
+            // Optionally, parse the error message from the server
+            const errorData = await response.json();
+            alert(`Failed to delete expense: ${errorData.message || 'Unknown error'}`);
+            return false;
+        }
+    } catch (error) {
+        console.error("Error deleting expenses:", error);
+        alert("Failed to delete expense. Check your network connection.");
+        return false;
+    }
+};
+
+const showNotification = (message) => {
+    const notification = document.getElementById('notification');
+    notification.innerHTML = message;
+    notification.style.display = "block";
+
+    setTimeout(() => {
+        document.getElementById('notification').innerHTML = "";
+        notification.style.display = "none";
+    }, 5000);
+};
 
 // --- Sidebar Toggle Logic ---
 menuToggle.addEventListener('click', () => {
@@ -155,8 +272,8 @@ const renderTransactionsList = (transactions, listElement, addDelete) => {
                 <div class="transaction-details">
                     <div class="transaction-description">${descriptor}</div>
                     <div class="transaction-date">
-                        <input type="checkbox" id="item-${t.id}" name="item-${t.id}">
-                        <label for="item-${t.id}">${new Date(t.date).toLocaleDateString()}</label>
+                        <input type="checkbox" id="${t.id}" name="${t.id}">
+                        <label for="${t.id}">${new Date(t.date).toLocaleDateString()}</label>
                     </div>
                     </div>
                 <div class="transaction-amount ${amountClass}">${sign}${formatCurrency(t.amount)}</div>
